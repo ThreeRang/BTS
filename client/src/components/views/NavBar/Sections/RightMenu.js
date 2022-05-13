@@ -34,7 +34,7 @@ function RightMenu(props) {
           <a href="/">create</a>
         </Menu.Item>
         <Menu.Item key="userData">
-          <a href="/users/Profile">Profile</a>
+          <a href={`/users/Profile/${account}`}>Profile</a>
         </Menu.Item>
       </Menu>
     )
