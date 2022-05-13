@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import NavBar from "./views/NavBar/NavBar.js"
 import Profile from "./views/Users/Profile.js"
+import MainPage from "./views/MainPage/MainPage.js"
 
 //import "./App.css";
 
@@ -17,7 +18,8 @@ const App = () =>{
       <div style={{ paddingTop: '69px', minHeight: 'calc(100vh - 80px)' }}>
         <Routes>
           {/* <Route path="/" element={<Home />} /> */}
-          <Route path={"/users/Profile"} element = {<Profile />}></Route>
+          <Route path={"/"} element ={<MainPage />}></Route>
+          <Route path={"/users/Profile/:userAccount"} element = {<Profile />}></Route>
         </Routes>
       </div>
     </BrowserRouter>
