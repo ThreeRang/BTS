@@ -31,7 +31,7 @@ function RightMenu(props) {
       <Menu mode={props.mode}>
         {console.log(account)}
         <Menu.Item key="create">
-          <a href="/">create</a>
+          <a href="/upload">create</a>
         </Menu.Item>
         <Menu.Item key="userData">
           <a href={`/users/Profile/${account}`}>Profile</a>
@@ -42,4 +42,3 @@ function RightMenu(props) {
 }
 
 export default RightMenu
-
