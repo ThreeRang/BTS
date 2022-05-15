@@ -25,7 +25,7 @@ const Profile = () => {
     }else{
         return(
             <div>
-                <p>My Current Connected Eth Account👇</p>
+                <p>My Current Connected Eth Account</p>
                 <p>{accounts}</p>
 
                 <p>My balance</p>

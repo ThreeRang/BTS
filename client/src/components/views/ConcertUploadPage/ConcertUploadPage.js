@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, Button, Form, message, Input} from 'antd'
-import Icon from '@ant-design/icons'
+import { Typography, Button, Form, Input, Icon} from 'antd-v3'
 import Dropzone from 'react-dropzone'
 //import Axios from 'axios';
 //import { useSelector } from 'react-redux';
@@ -12,16 +11,17 @@ const { Title } = Typography
 
 function ConcertUploadPage(props) {
   /*Register변수 DB에 저장할 때 누가 저장했는지 저장할 변수*/
-  const [Register, setRegister] = useState("")
+  /* const [Register, setRegister] = useState("") */
   const [ConcertTitle, setConcertTitle] = useState("")
   const [Description, setDescription] = useState("")
   const [ConcertAddress, setConcertAddress] = useState("")
 
   /*서버 연결 이후 저장에 필요한 local Storage에 저장될 path */
-  const [ConcertUploadPath, setConcertUploadPath] = useState("")
+
+  /* const [ConcertUploadPath, setConcertUploadPath] = useState("")
   const [SeatImgPath, setSeatImgPath] = useState("")
   const [TicketImgPath, setTicketImgPath] = useState("")
-
+ */
   /*-------------------onChange----------------------*/
   const onTitleChange = (e) =>{
     setConcertTitle(e.currentTarget.value)

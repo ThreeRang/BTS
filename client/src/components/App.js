@@ -1,9 +1,8 @@
-import React, { Suspense } from "react";
+import React from "react";
 import {
   BrowserRouter,
   Routes,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 import NavBar from "./views/NavBar/NavBar.js"
 import Profile from "./views/Users/Profile.js"
