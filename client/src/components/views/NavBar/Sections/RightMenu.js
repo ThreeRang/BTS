@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React,{useEffect, useState} from 'react';
-import { Menu } from 'antd';
+import React,{useState} from 'react';
+import { Menu } from 'antd-v3';
+//import '~antd-v3/dist/antd-v3.css';
 
 function RightMenu(props) {
   const [account,setAccount] = useState(null);
