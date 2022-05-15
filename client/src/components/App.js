@@ -8,6 +8,7 @@ import {
 import NavBar from "./views/NavBar/NavBar.js"
 import Profile from "./views/Users/Profile.js"
 import MainPage from "./views/MainPage/MainPage.js"
+import ConcertUploadPage from "./views/ConcertUploadPage/ConcertUploadPage.js"
 
 //import "./App.css";
 
@@ -19,6 +20,7 @@ const App = () =>{
         <Routes>
           {/* <Route path="/" element={<Home />} /> */}
           <Route path={"/"} element ={<MainPage />}></Route>
+          <Route path={"/upload"} element={<ConcertUploadPage />}></Route>
           <Route path={"/users/Profile/:userAccount"} element = {<Profile />}></Route>
         </Routes>
       </div>
