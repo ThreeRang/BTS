@@ -1,12 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React,{useState} from 'react';
 import { Menu } from 'antd-v3';
+
+// import Web3 from 'web3';
+
 //import '~antd-v3/dist/antd-v3.css';
 
 function RightMenu(props) {
   const [account,setAccount] = useState(null);
 	const [errorMessage, setErrorMessage] = useState(null);
-  
+  // var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:7545"));
 	const connectWallet = () => {
 		window.ethereum
 		.request({ method: "eth_requestAccounts" })
@@ -18,6 +21,12 @@ function RightMenu(props) {
       console.log(errorMessage);
 		});
 	}
+
+  if (window.ethereum.isConnected()){
+    console.log(window.ethereum.isConnected());
+    connectWallet();
+    // console.log(account);
+  }
 
   if (!account) {
     return (
