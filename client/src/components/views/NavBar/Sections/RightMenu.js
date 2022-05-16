@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React,{useEffect, useState} from 'react';
-import { Menu } from 'antd';
+import React,{useState} from 'react';
+import { Menu } from 'antd-v3';
+//import '~antd-v3/dist/antd-v3.css';
 
 function RightMenu(props) {
   const [account,setAccount] = useState(null);
@@ -31,10 +32,10 @@ function RightMenu(props) {
       <Menu mode={props.mode}>
         {console.log(account)}
         <Menu.Item key="create">
-          <a href="/">create</a>
+          <a href="/upload">create</a>
         </Menu.Item>
         <Menu.Item key="userData">
-          <a href="/users/Profile">Profile</a>
+          <a href={`/users/Profile/${account}`}>Profile</a>
         </Menu.Item>
       </Menu>
     )
@@ -42,4 +43,3 @@ function RightMenu(props) {
 }
 
 export default RightMenu
-
