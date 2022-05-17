@@ -17,6 +17,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "async-file": "^2.0.2",
+    "axios": "^0.27.2",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "build": "^0.1.4",
