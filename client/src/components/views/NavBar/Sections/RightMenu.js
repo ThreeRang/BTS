@@ -22,12 +22,8 @@ function RightMenu(props) {
 		});
 	}
 
-  if (window.ethereum.isConnected()){
-    console.log(window.ethereum.isConnected());
-    connectWallet();
-    // console.log(account);
-  }
-
+  connectWallet();
+  console.log(account);
   if (!account) {
     return (
       <Menu mode={props.mode}>
@@ -39,7 +35,6 @@ function RightMenu(props) {
   } else {
     return (
       <Menu mode={props.mode}>
-        {console.log(account)}
         <Menu.Item key="create">
           <a href="/upload">create</a>
         </Menu.Item>
