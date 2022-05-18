@@ -1,0 +1,75 @@
+.detail_box_top {
+  min-width: 800px;
+  /* min-height: 1000px; */
+  padding: 15px;
+  border: 1px solid #dedede;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.199);
+  width: 80%;
+  aspect-ratio: auto 80 / 50;
+  text-align: center;
+  vertical-align: middle;
+  margin: 10%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  /* *zoom: 1; */
+}
+.titleBox {
+  /* position: absolute; */
+  display: flex;
+  background: #fff;
+  border: 1px solid #d5d5d5;
+  padding: 10px;
+  font-size: 20px;
+  margin: 2%;
+}
+.left {
+  float: left;
+  width: 27%;
+  aspect-ratio: auto 27 / 44;
+  margin: 2%;
+}
+.ticketImage {
+  text-align: center;
+  aspect-ratio: auto 27 / 36;
+  /* width: 314px; */
+  /* height: 382px; */
+  border: 1px solid #d5d5d5;
+}
+.parchaseButtonArea {
+  display: flex;
+  /* float: left; */
+  text-align: center;
+  width: 100%;
+  margin: 0%;
+  aspect-ratio: auto 27 / 8;
+  align-items: center;
+}
+/* .parchaseButton {
+  display: flex;
+  align-items: center;
+} */
+.tickeData {
+  text-align: center;
+  float: right;
+  width: 60%;
+  aspect-ratio: auto 60 / 44;
+  margin: 0;
+  border: 1px solid #d5d5d5;
+  margin: 2%;
+}
+.detail_box_bottom {
+  min-width: 800px;
+  /* min-height: 1000px; */
+  padding: 15px;
+  border: 1px solid #d5d5d5;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.199);
+  width: 80%;
+  aspect-ratio: auto 80 / 50;
+  text-align: center;
+  vertical-align: middle;
+  margin: 10%;
+  margin-top: 10px;
+  margin-bottom: 100px;
+}
