@@ -1,4 +1,5 @@
 const express = require("express");
+const { isValidObjectId } = require("mongoose");
 const router = express.Router();
 const { User } = require("../models/User");
 
@@ -32,5 +33,20 @@ router.get("/userProfile", (req, res) => {
     if (err) return res.status(400).json({ success: false, err });
     return res.status(200).json({ success: true, userInfo });
   });
+});
+
+router.patch("/update", (req, res) => {
+  try {
+    const { _id, name, email } = req.body;
+    const update = {
+      name: name,
+      email: email,
+    };
+    User.findOne({ _id: _id }).exec(async (err, userInfo) => {
+      if (err) return res.status(400).json({ success: false, err });
+      await User.updateOne({ _id: _id }, update, { new: true });
+      return res.status(200).json({ success: true });
+    });
+  } catch (err) {}
 });
 module.exports = router;
