@@ -11,7 +11,6 @@ router.get('/findUser', (req, res) =>{
     console.log(_id)
 
     User.findOne({"_id": _id}).exec((err, userInfo) =>{
-        console.log(userInfo)
         if(err) return res.status(400).send(err);
         if(!userInfo) return res.status(200).json({ess : false});
         return res.status(200).json({ess: true});
@@ -19,11 +18,20 @@ router.get('/findUser', (req, res) =>{
 })
 
 router.post('/signUp', (req, res) =>{
-    console.log("post")
     const user = new User(req.body)
     user.save((err, doc) =>{
         if(err) return res.status(400).json({success: false, err});
         return res.status(200).json({success: true})
+    })
+})
+
+router.get('/userProfile', (req, res) =>{
+    const {_id} = req.query;
+    User.findOne({"_id" : _id})
+    .exec((err, userInfo) =>{
+        console.log(userInfo)
+        if(err) return res.status(400).json({success: false, err})
+        return res.status(200).json({success:true, userInfo})
     })
 })
 module.exports = router;
