@@ -5,14 +5,14 @@ import { Drawer, Button, Icon } from 'antd-v3';
 import './Sections/Navbar.css';
 
 function NavBar() {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
   const showDrawer = () => {
-    setVisible(true)
+    setVisible(true);
   };
 
   const onClose = () => {
-    setVisible(false)
+    setVisible(false);
   };
 
   return (
@@ -27,11 +27,7 @@ function NavBar() {
         <div className="menu_rigth">
           <RightMenu mode="horizontal" />
         </div>
-        <Button
-          className="menu__mobile-button"
-          type="primary"
-          onClick={showDrawer}
-        >
+        <Button className="menu__mobile-button" type="primary" onClick={showDrawer}>
           <Icon type="align-right" />
         </Button>
         <Drawer
@@ -47,7 +43,7 @@ function NavBar() {
         </Drawer>
       </div>
     </nav>
-  )
+  );
 }
 
-export default NavBar
+export default NavBar;
