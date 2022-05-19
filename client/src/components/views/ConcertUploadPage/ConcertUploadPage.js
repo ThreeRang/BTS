@@ -49,7 +49,7 @@ function ConcertUploadPage() {
   };
 
   useEffect(() => {
-    Axios.get('http://localhost:5000/api/users/getUserRole', { params: { _id: account } }).then((response) => {
+    Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
       console.log(response.data);
       if (response.data.success) {
         if (response.data.userInfo.role === 0) {
