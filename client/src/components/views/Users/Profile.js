@@ -3,14 +3,18 @@ import { useParams } from 'react-router-dom';
 import Axios from 'axios';
 import Avatar from 'react-avatar';
 import { Button } from 'antd-v3';
-
 import profileStyle from './Profile.module.css';
+import { Nav } from 'react-bootstrap';
+import PurchaseDetail from './PurchaseDetail';
+import RegisterDetail from './RegisterDetail';
+
 const Profile = () => {
   const account = useParams().userAccount;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState(0);
   const [img, setImg] = useState('');
+  const [tab, setTab] = useState('');
 
   useEffect(() => {
     Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
@@ -24,6 +28,8 @@ const Profile = () => {
       }
     });
   }, []);
+
+
   return (
     <div className={profileStyle.wrapper}>
       <div className={profileStyle.profileBackground}></div>
@@ -53,11 +59,43 @@ const Profile = () => {
               <a href={`/users/Profile/Update/${account}`}>수정</a>
             </Button>
           </div>
+          <div className="contents">
+            <Nav>
+              <Nav.Item>
+                <Nav.Link onClick={() => setTab("purchase")}>
+                  구매 내역
+                </Nav.Link>
+                &nbsp;
+                <Nav.Link onClick={() => setTab("register")}>
+                  등록 내역
+                </Nav.Link>
+              </Nav.Item>
+            </Nav>
+          </div>
           <hr />
+          <TabContent tab={tab} />
         </div>
       </div>
     </div>
   );
+
+  function TabContent(props) {
+    if (props.tab === 'purchase')
+      return (
+        <div>
+          <PurchaseDetail />
+        </div>
+      );
+
+    else if (props.tab === "register")
+      return (
+        <div>
+          <RegisterDetail />
+        </div>
+      );
+
+    else return (<div></div>);
+  };
 };
 
 export default Profile;
