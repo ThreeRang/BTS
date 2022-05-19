@@ -15,6 +15,7 @@ const Profile = () => {
   useEffect(() => {
     Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
       if (response.data.success) {
+        console.log(response);
         setName(response.data.userInfo.name);
         setEmail(response.data.userInfo.email);
         setRole(response.data.userInfo.role);
@@ -50,7 +51,7 @@ const Profile = () => {
           <div className={profileStyle.updateButton}>
             <Button>등록권한 신청</Button>
             <Button>
-              <a href={'/users/Profile/Update/${account}'}>수정</a>
+              <a href={`/users/Profile/Update/${account}`}>수정</a>
             </Button>
           </div>
           <hr />

@@ -28,8 +28,8 @@ router.post("/signUp", (req, res) => {
 
 router.get("/userProfile", (req, res) => {
   const { _id } = req.query;
+  console.log(_id);
   User.findOne({ _id: _id }).exec((err, userInfo) => {
-    console.log(userInfo);
     if (err) return res.status(400).json({ success: false, err });
     return res.status(200).json({ success: true, userInfo });
   });
@@ -38,6 +38,7 @@ router.get("/userProfile", (req, res) => {
 router.patch("/update", (req, res) => {
   try {
     const { _id, name, email } = req.body;
+    console.log(_id);
     const update = {
       name: name,
       email: email,
