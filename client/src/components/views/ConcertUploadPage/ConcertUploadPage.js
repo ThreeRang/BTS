@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Typography, Button, Form, Input, Icon } from 'antd-v3';
 import Dropzone from 'react-dropzone';
+import Axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
 //import Axios from 'axios';
 //import { useSelector } from 'react-redux';
 
@@ -9,9 +11,11 @@ import Dropzone from 'react-dropzone';
 const { TextArea } = Input;
 const { Title } = Typography;
 
-function ConcertUploadPage(props) {
+function ConcertUploadPage() {
   /*Register변수 DB에 저장할 때 누가 저장했는지 저장할 변수*/
   /* const [Register, setRegister] = useState("") */
+  const account = useParams().userAccount;
+  const navigate = useNavigate();
   const [ConcertTitle, setConcertTitle] = useState('');
   const [Description, setDescription] = useState('');
   const [ConcertAddress, setConcertAddress] = useState('');
@@ -44,6 +48,24 @@ function ConcertUploadPage(props) {
     e.preventDefault();
   };
 
+  useEffect(() => {
+    Axios.get('http://localhost:5000/api/users/getUserRole', { params: { _id: account } }).then((response) => {
+      console.log(response.data);
+      if (response.data.success) {
+        if (response.data.userInfo.role === 0) {
+          alert('권한이 없습니다.');
+          setTimeout(() => {
+            navigate('/');
+          });
+        }
+      } else {
+        alert('유저 정보를 읽지 못했습니다.');
+        setTimeout(() => {
+          navigate(`/users/Profile/${account}`);
+        });
+      }
+    });
+  }, []);
   return (
     <div style={{ maxWidth: '700px', margin: '2rem auto' }}>
       <Form onSubmit={onSubmit}>
