@@ -37,7 +37,6 @@ router.get("/userProfile", (req, res) => {
 router.patch("/update", (req, res) => {
   try {
     const { _id, name, email } = req.body;
-    console.log(_id);
     const update = {
       name: name,
       email: email,
@@ -48,5 +47,13 @@ router.patch("/update", (req, res) => {
       return res.status(200).json({ success: true });
     });
   } catch (err) {}
+});
+
+router.get("/getUserRole", (req, res) => {
+  const { _id } = req.query;
+  User.findOne({ _id: _id }).exec((err, userInfo) => {
+    if (err) return res.status(400).json({ success: false, err });
+    return res.status(200).json({ success: true, userInfo });
+  });
 });
 module.exports = router;

@@ -17,7 +17,7 @@ const App = () => {
         <Routes>
           {/* <Route path="/" element={<Home />} /> */}
           <Route path={'/'} element={<MainPage />}></Route>
-          <Route path={'/upload'} element={<ConcertUploadPage />}></Route>
+          <Route path={'/upload/:userAccount'} element={<ConcertUploadPage />}></Route>
           <Route path={'/users/Profile/:userAccount'} element={<Profile />}></Route>
           <Route path={'/users/Profile/Update/:userAccount'} element={<ProfileUpdate />}></Route>
           <Route path={'/concert/Ticket'} element={<TicketPage />}></Route>
