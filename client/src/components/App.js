@@ -5,6 +5,7 @@ import Profile from './views/Users/Profile.js';
 import ProfileUpdate from './views/Users/ProfileUpdate.js';
 import MainPage from './views/MainPage/MainPage.js';
 import ConcertUploadPage from './views/ConcertUploadPage/ConcertUploadPage.js';
+import TicketPage from './views/TicketPage/TicketPage.js';
 
 //import "./App.css";
 
@@ -19,6 +20,7 @@ const App = () => {
           <Route path={'/upload'} element={<ConcertUploadPage />}></Route>
           <Route path={'/users/Profile/:userAccount'} element={<Profile />}></Route>
           <Route path={'/users/Profile/Update/:userAccount'} element={<ProfileUpdate />}></Route>
+          <Route path={'/concert/Ticket'} element={<TicketPage />}></Route>
         </Routes>
       </div>
     </BrowserRouter>

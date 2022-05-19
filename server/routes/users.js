@@ -28,7 +28,6 @@ router.post("/signUp", (req, res) => {
 
 router.get("/userProfile", (req, res) => {
   const { _id } = req.query;
-  console.log(_id);
   User.findOne({ _id: _id }).exec((err, userInfo) => {
     if (err) return res.status(400).json({ success: false, err });
     return res.status(200).json({ success: true, userInfo });
