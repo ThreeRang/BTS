@@ -9,7 +9,7 @@ const concertSchema = mongoose.Schema(
       _id: {
         type: String,
       },
-      title: {
+      concertTitle: {
         //제목
         type: String,
         maxlength: 50,
@@ -29,6 +29,11 @@ const concertSchema = mongoose.Schema(
         //공연좌석수
         type: Number,
         default: 0,
+      },
+      concertAddress: {
+        //공연 장소
+        type: String,
+        default: "",
       },
       reservation: {
         open: {
