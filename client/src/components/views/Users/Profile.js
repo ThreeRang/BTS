@@ -16,6 +16,22 @@ const Profile = () => {
   const [img, setImg] = useState('');
   const [tab, setTab] = useState('');
 
+  const variables = {
+    _id: account,
+  };
+  const onChangeRole = () => {
+    if (role === 1) {
+      alert('이미 권한있는 계정입니다.');
+    } else {
+      Axios.patch('http://localhost:5000/api/users/userRoleChange', variables).then((response) => {
+        if (response.data.success) {
+          alert('권한이 부여되었습니다.');
+        } else {
+          alert('권한 부여를 실패하였습니다.');
+        }
+      });
+    }
+  };
   useEffect(() => {
     Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
       if (response.data.success) {
@@ -54,7 +70,7 @@ const Profile = () => {
 
           {role === 0 ? <strong>권한 : 일반 사용자</strong> : <strong>권한 : 매니저</strong>}
           <div className={profileStyle.updateButton}>
-            <Button>등록권한 신청</Button>
+            <Button onClick={onChangeRole}>등록권한 신청</Button>
             <Button>
               <a href={`/users/Profile/Update/${account}`}>수정</a>
             </Button>

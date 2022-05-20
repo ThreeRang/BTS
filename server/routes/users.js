@@ -49,11 +49,12 @@ router.patch("/update", (req, res) => {
   } catch (err) {}
 });
 
-router.get("/getUserRole", (req, res) => {
-  const { _id } = req.query;
-  User.findOne({ _id: _id }).exec((err, userInfo) => {
+router.patch("/userRoleChange", (req, res) => {
+  const { _id } = req.body;
+  User.findOne({ _id: _id }).exec(async (err, userInfo) => {
     if (err) return res.status(400).json({ success: false, err });
-    return res.status(200).json({ success: true, userInfo });
+    await User.updateOne({ _id: _id }, { role: 1 }, { new: true });
+    return res.status(200).json({ success: true });
   });
 });
 module.exports = router;
