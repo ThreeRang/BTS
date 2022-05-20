@@ -21,15 +21,15 @@ const MainPage = () => {
     return (
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
         <div className={concertStyle.concertImage}>
-          {/* <a href ={`/video/detail/${video._id}`}> */}
-          <div>
-            <img
-              style={{ width: '100%' }}
-              src={`http://localhost:5000/${concert.image.concertImage}`}
-              alt="concertImage"
-            />
-          </div>
-          {/* </a> */}
+          <a href={`/concert/detail/${concert._id}`}>
+            <div>
+              <img
+                style={{ width: '100%' }}
+                src={`http://localhost:5000/${concert.image.concertImage}`}
+                alt="concertImage"
+              />
+            </div>
+          </a>
           <br />
           <Meta
             style={{ marginLeft: '1rem' }}
