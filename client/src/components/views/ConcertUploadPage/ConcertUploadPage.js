@@ -3,6 +3,7 @@ import { Typography, Button, message, Form, Input, Icon } from 'antd-v3';
 import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import uploadStyle from './ConcertUploadPage.module.css';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -134,22 +135,19 @@ function ConcertUploadPage(props) {
     });
   }, []);
   return (
-    <div style={{ maxWidth: '700px', margin: '2rem auto' }}>
+    <div className={uploadStyle.wrapper}>
       <Form onSubmit={onSubmit}>
-        <Title level={2}>-공연 이미지 업로드</Title>
-        <div style={{ display: 'center' }}>
+        <Title level={3}>공연 이미지 업로드</Title>
+        <div>
           <Dropzone onDrop={onDropConcertImage} multiple={false} maxSize={1000000000}>
             {({ getRootProps, getInputProps }) => (
-              <div
-                style={{ width: '100%', height: '240px', border: '1px solid lightgray', textAlign: 'center' }}
-                {...getRootProps()}
-              >
+              <div className={uploadStyle.bigBox} {...getRootProps()}>
                 <input {...getInputProps()} />
                 {!concertImagePath ? (
                   <div>
-                    <Icon type="plus" style={{ fontSize: '3rem', marginTop: '90px' }} />
+                    <Icon type="plus" className={uploadStyle.boxIcon} />
                     <br />
-                    <h1 style={{ fontSize: '20px' }}> insert your Concert Image</h1>
+                    <h1 style={{ fontSize: '20px' }}> Insert your Concert Image</h1>
                   </div>
                 ) : (
                   <div>
@@ -162,21 +160,18 @@ function ConcertUploadPage(props) {
         </div>
         <br />
         <br />
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div className={uploadStyle.smallWrapper}>
           <div>
-            <Title level={2}>-좌석표 이미지 업로드</Title>
+            <Title level={3}>좌석표 이미지 업로드</Title>
             <Dropzone onDrop={onDropSeatImage} multiple={false} maxSize={1000000000}>
               {({ getRootProps, getInputProps }) => (
-                <div
-                  style={{ width: '300px', height: '240px', border: '1px solid lightgray', textAlign: 'center' }}
-                  {...getRootProps()}
-                >
+                <div className={uploadStyle.smallBox} {...getRootProps()}>
                   <input {...getInputProps()} />
                   {!seatImagePath ? (
                     <div>
-                      <Icon type="plus" style={{ fontSize: '3rem', marginTop: '90px' }} />
+                      <Icon type="plus" className={uploadStyle.boxIcon} />
                       <br />
-                      <h1 style={{ fontSize: '20px' }}> insert your Seat Image</h1>
+                      <h1 style={{ fontSize: '20px' }}> Insert your Seat Image</h1>
                     </div>
                   ) : (
                     <div>
@@ -188,19 +183,16 @@ function ConcertUploadPage(props) {
             </Dropzone>
           </div>
           <div>
-            <Title level={2}>-티켓 이미지 업로드</Title>
+            <Title level={3}>티켓 이미지 업로드</Title>
             <Dropzone onDrop={onDropTicketImage} multiple={false} maxSize={1000000000}>
               {({ getRootProps, getInputProps }) => (
-                <div
-                  style={{ width: '300px', height: '240px', border: '1px solid lightgray', textAlign: 'center' }}
-                  {...getRootProps()}
-                >
+                <div className={uploadStyle.smallBox} {...getRootProps()}>
                   <input {...getInputProps()} />
                   {!ticketImagePath ? (
                     <div>
-                      <Icon type="plus" style={{ fontSize: '3rem', marginTop: '90px' }} />
+                      <Icon type="plus" className={uploadStyle.boxIcon} />
                       <br />
-                      <h1 style={{ fontSize: '20px' }}> insert your Ticket Image</h1>
+                      <h1 style={{ fontSize: '20px' }}> Insert your Ticket Image</h1>
                     </div>
                   ) : (
                     <div>
@@ -214,26 +206,28 @@ function ConcertUploadPage(props) {
         </div>
         <br />
         <br />
-        <label>Concert Title</label>
-        <Input onChange={onTitleChange} value={concertTitle} />
+        <div style={{ textAlign: 'left' }}>
+          <label>Concert Title</label>
+          <Input onChange={onTitleChange} value={concertTitle} />
+          <br />
+          <br />
+          <label>Concert Description</label>
+          <TextArea onChange={onDescriptionChange} value={description} required />
+          <br />
+          <br />
+          <label>Concert Address</label>
+          <TextArea onChange={onConcertAddressChange} value={concertAddress} required />
+          <br />
+          <br />
+          <label>Seat Number </label>
+          <input type="number" onChange={onNumOfSeatChange} value={numOfSeat} required />
+          <br />
+          <br />
+          <Button type="primary" size="large" onClick={onSubmit}>
+            submit
+          </Button>
+        </div>
       </Form>
-      <br />
-      <br />
-      <label>Concert Description</label>
-      <TextArea onChange={onDescriptionChange} value={description} required />
-      <br />
-      <br />
-      <label>Concert Address</label>
-      <TextArea onChange={onConcertAddressChange} value={concertAddress} required />
-      <br />
-      <br />
-      <label>Seat Number </label>
-      <input type="number" onChange={onNumOfSeatChange} value={numOfSeat} required />
-      <br />
-      <br />
-      <Button type="primary" size="large" onClick={onSubmit}>
-        submit
-      </Button>
     </div>
   );
 }
