@@ -50,4 +50,13 @@ router.patch("/update", (req, res) => {
     });
   } catch (err) {}
 });
+
+router.patch("/userRoleChange", (req, res) => {
+  const { _id } = req.body;
+  User.findOne({ _id: _id }).exec(async (err, userInfo) => {
+    if (err) return res.status(400).json({ success: false, err });
+    await User.updateOne({ _id: _id }, { role: 1 }, { new: true });
+    return res.status(200).json({ success: true });
+  });
+});
 module.exports = router;
