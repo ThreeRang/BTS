@@ -13,17 +13,27 @@ router.get("/getConcerts", (req, res) => {
     day = "0" + day;
   }
   const today = year + "-" + month + "-" + day;
-  console.log(today);
-  Concert.find(/* {
+  if (req.query.search === "") {
+    Concert.find(/* {
     today: {
       $gte: "concertInfo.reservation.open.date",
       $lte: "concertInfo.reservation.close.date",
     },
   } */)
-    .sort({ "concertInfo.concertDate.date": "1" })
-    .exec((err, concerts) => {
-      if (err) return res.status(400).json({ success: false, err });
-      return res.status(200).json({ success: true, concerts });
-    });
+      .sort({ "concertInfo.concertDate.date": "1" })
+      .exec((err, concerts) => {
+        if (err) return res.status(400).json({ success: false, err });
+        return res.status(200).json({ success: true, concerts });
+      });
+  } else {
+    Concert.find({
+      "concertInfo.concertTitle": { $regex: req.query.search, $options: "i" },
+    })
+      .sort({ "concertInfo.concertDate.date": "1" })
+      .exec((err, concerts) => {
+        if (err) return res.status(400).json({ success: false, err });
+        return res.status(200).json({ success: true, concerts });
+      });
+  }
 });
 module.exports = router;
