@@ -2,19 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Axios from 'axios';
 import Avatar from 'react-avatar';
-import { Button } from 'antd-v3';
+import { Button, Tabs } from 'antd-v3';
 import { Nav } from 'react-bootstrap';
 
 import PurchaseHistory from './ProfileHistory/PurchaseHistory';
 import UploadHistory from './ProfileHistory/UploadHistory';
 import profileStyle from './Profile.module.css';
+
+const { TabPane } = Tabs;
 const Profile = () => {
   const account = useParams().userAccount;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState(0);
   const [img, setImg] = useState('');
-  const [tab, setTab] = useState(0);
 
   const variables = {
     _id: account,
@@ -32,15 +33,8 @@ const Profile = () => {
       });
     }
   };
-  const onChangeTab = (tabNum) => {
-    setTab(tabNum);
-  };
-  const TabContent = (props) => {
-    if (props.tab === 0) {
-      return <PurchaseHistory account={account} />;
-    } else if (props.tab === 1) {
-      return <UploadHistory account={account} />;
-    }
+  const callback = (key) => {
+    console.log(key);
   };
   useEffect(() => {
     Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
@@ -85,38 +79,16 @@ const Profile = () => {
           </div>
           <hr />
 
-          <Nav
-            style={{ display: 'flex', justifyContent: 'center' }}
-            className="mt-5 mb-3"
-            variant="tabs"
-            defaultActiveKey="link-0"
-          >
-            <div style={{ margin: '5px' }}>
-              <Nav.Item>
-                <Nav.Link
-                  eventKey="link-0"
-                  onClick={() => {
-                    onChangeTab(0);
-                  }}
-                >
-                  <Button>구매내역</Button>
-                </Nav.Link>
-              </Nav.Item>
-            </div>
-            <div style={{ margin: '5px' }}>
-              <Nav.Item>
-                <Nav.Link
-                  eventKey="link-1"
-                  onClick={() => {
-                    onChangeTab(1);
-                  }}
-                >
-                  <Button>등록내역</Button>
-                </Nav.Link>
-              </Nav.Item>
-            </div>
-          </Nav>
-          <TabContent tab={tab} />
+          <div>
+            <Tabs defaultActiveKey="1" onChange={callback}>
+              <TabPane tab="구매내역" key="1">
+                <PurchaseHistory account={account} />
+              </TabPane>
+              <TabPane tab="등록내역" key="2">
+                <UploadHistory account={account} />
+              </TabPane>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>
