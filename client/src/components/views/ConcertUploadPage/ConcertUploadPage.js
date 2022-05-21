@@ -17,7 +17,12 @@ function ConcertUploadPage(props) {
   const [description, setDescription] = useState('');
   const [concertAddress, setconcertAddress] = useState('');
   const [numOfSeat, setNumOfSeat] = useState(0);
-  /*서버 연결 이후 저장에 필요한 local Storage에 저장될 path */
+  const [reservationOpenDate, setReservationOpenDate] = useState(new Date());
+  const [reservationCloseDate, setReservationCloseDate] = useState(new Date());
+  const [reservationOpenTime, setReservationOpenTime] = useState(new Date().getTime());
+  const [reservationCloseTime, setReservationCloseTime] = useState(new Date().getTime());
+  const [concertDate, setConcertDate] = useState(new Date());
+  const [concertTime, setConcertTime] = useState(new Date().getTime());
 
   const [concertImagePath, setconcertImagePath] = useState('');
   const [seatImagePath, setSeatImagePath] = useState('');
@@ -39,7 +44,37 @@ function ConcertUploadPage(props) {
   const onNumOfSeatChange = (e) => {
     setNumOfSeat(e.currentTarget.value);
   };
-  /*서버 연결 이후 구현*/
+
+  /*
+    예약 오픈 마감 일정 
+  */
+  const onOpenDateChange = (e) => {
+    setReservationOpenDate(e.currentTarget.value);
+  };
+
+  const onOpenTimeChange = (e) => {
+    setReservationOpenTime(e.currentTarget.value);
+  };
+
+  const onCloseDateChange = (e) => {
+    setReservationCloseDate(e.currentTarget.value);
+  };
+  const onCloseTimeChange = (e) => {
+    console.log(e.currentTarget.value);
+    setReservationCloseTime(e.currentTarget.value);
+  };
+
+  /*
+    콘서트 일정
+  */
+  const onConcertDateChange = (e) => {
+    setConcertDate(e.currentTarget.value);
+  };
+
+  const onConcertTimeChange = (e) => {
+    setConcertTime(e.currentTarget.value);
+  };
+
   const onDropConcertImage = (files) => {
     let formData = new FormData();
     const config = {
@@ -95,8 +130,22 @@ function ConcertUploadPage(props) {
         _id: account,
         concertTitle: concertTitle,
         description: description,
+        concertDate: {
+          date: concertDate,
+          time: concertTime,
+        },
         numOfSeat: numOfSeat,
         concertAddress: concertAddress,
+        reservation: {
+          open: {
+            date: reservationOpenDate,
+            time: reservationOpenTime,
+          },
+          close: {
+            date: reservationCloseDate,
+            time: reservationCloseTime,
+          },
+        },
       },
       image: {
         concertImage: concertImagePath,
@@ -220,7 +269,31 @@ function ConcertUploadPage(props) {
           <br />
           <br />
           <label>Seat Number </label>
+          <br />
           <input type="number" onChange={onNumOfSeatChange} value={numOfSeat} required />
+          <br />
+          <br />
+          <div style={{ display: 'flex' }}>
+            <div>
+              <label>Reservation open</label>
+              <br />
+              <input type="date" onChange={onOpenDateChange} value={reservationOpenDate} />
+              <input type="time" onChange={onOpenTimeChange} value={reservationOpenTime} />
+            </div>
+            <div>
+              <label>Reservation close</label>
+              <br />
+              <input type="date" onChange={onCloseDateChange} value={reservationCloseDate} />
+              <input type="time" onChange={onCloseTimeChange} value={reservationCloseTime} />
+            </div>
+          </div>
+          <br />
+          <div>
+            <label>Concert Date</label>
+            <br />
+            <input type="date" onChange={onConcertDateChange} value={concertDate} />
+            <input type="time" onChange={onConcertTimeChange} value={concertTime} />
+          </div>
           <br />
           <br />
           <Button type="primary" size="large" onClick={onSubmit}>

@@ -22,8 +22,12 @@ const concertSchema = mongoose.Schema(
       },
       concertDate: {
         //공연날짜
-        type: String,
-        default: Date.now,
+        date: {
+          type: String,
+        },
+        time: {
+          type: String,
+        },
       },
       numOfSeat: {
         //공연좌석수
@@ -37,12 +41,20 @@ const concertSchema = mongoose.Schema(
       },
       reservation: {
         open: {
-          type: Date,
-          default: Date.now,
+          date: {
+            type: String,
+          },
+          time: {
+            type: String,
+          },
         },
         close: {
-          type: Date,
-          default: Date.now,
+          date: {
+            type: String,
+          },
+          time: {
+            type: String,
+          },
         },
       },
     },
