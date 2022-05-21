@@ -88,4 +88,15 @@ router.get("/getConcerts", (req, res) => {
     }
   }
 });
+
+router.get("/getUserConcerts", (req, res) => {
+  const { _id } = req.query;
+
+  Concert.find({ "concertInfo._id": _id })
+    .sort({ "concertInfo.concertDate.date": "1" })
+    .exec((err, concerts) => {
+      if (err) return res.status(400).json({ success: false, err });
+      return res.status(200).json({ success: true, concerts });
+    });
+});
 module.exports = router;
