@@ -7,16 +7,20 @@ const { Title } = Typography;
 
 const MainPage = () => {
   const [concerts, setConcerts] = useState([]);
+  const [search, setSearch] = useState('');
 
+  const onSearchChange = (e) => {
+    setSearch(e.currentTarget.value);
+  };
   useEffect(() => {
-    Axios.get('http://localhost:5000/api/concert/getConcerts').then((response) => {
+    Axios.get('http://localhost:5000/api/concert/getConcerts', { params: { search: search } }).then((response) => {
       if (response.data.success) {
         setConcerts(response.data.concerts);
       } else {
         alert('콘서트 가져오기를 실패 했습니다.');
       }
     });
-  }, []);
+  }, [search]);
   const renderCards = concerts.map((concert, index) => {
     return (
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
@@ -47,11 +51,6 @@ const MainPage = () => {
             style={{ marginLeft: '1rem' }}
             description={`예약 마감 : ${concert.concertInfo.reservation.close.date}`}
           />
-
-          <div>
-            <p> </p>
-            <p></p>
-          </div>
           <hr />
           <p>
             &nbsp;&nbsp;from :&nbsp;
@@ -66,8 +65,13 @@ const MainPage = () => {
   return (
     <div style={{ width: '85%', margin: '2rem auto' }}>
       <Title level={2}>
-        <div style={{ display: 'flex' }}>
-          <h1>Latest</h1>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <input
+            type="search"
+            style={{ width: '250px', height: '30px', fontSize: '25px' }}
+            placeholder="Search..."
+            onChange={onSearchChange}
+          />
         </div>
       </Title>
       <hr />
