@@ -4,13 +4,13 @@ pragma solidity >=0.4.22 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "./MintingTicketToken.sol";
+import "./MintTicketToken.sol";
 
 contract PurchaseTicketToken{
-    MintingTicketToken public mintTicketTokenAddress;
+    MintTicketToken public mintTicketTokenAddress;
 
     constructor (address _mintTicketTokenAddress){
-        mintTicketTokenAddress = MintingTicketToken(_mintTicketTokenAddress);
+        mintTicketTokenAddress = MintTicketToken(_mintTicketTokenAddress);
     }
 
     //(key, value) => (_tokenId, _ticketPrice)
