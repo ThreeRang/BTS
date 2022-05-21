@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import Axios from 'axios';
 import Avatar from 'react-avatar';
 import { Button, Tabs } from 'antd-v3';
-import { Nav } from 'react-bootstrap';
 
 import PurchaseHistory from './ProfileHistory/PurchaseHistory';
 import UploadHistory from './ProfileHistory/UploadHistory';
@@ -47,7 +46,7 @@ const Profile = () => {
         alert('유저 정보를 읽는데 실패하였습니다.');
       }
     });
-  }, []);
+  }, [account]);
   return (
     <div className={profileStyle.wrapper}>
       <div className={profileStyle.profileBackground}></div>

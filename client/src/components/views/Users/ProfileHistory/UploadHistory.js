@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Col, Typography, Row } from 'antd-v3';
+import { Col, Row } from 'antd-v3';
 
 import Meta from 'antd-v3/lib/card/Meta';
 import Axios from 'axios';
 import concertStyle from '../../MainPage/MainPage.module.css';
 
-const UploadHistory = ({ tab, account }) => {
+const UploadHistory = ({ account }) => {
   const [concerts, setConcerts] = useState([]);
-  console.log('등록내역 ' + account);
   const renderCards = concerts.map((concert, index) => {
     return (
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
@@ -57,10 +56,10 @@ const UploadHistory = ({ tab, account }) => {
         alert('콘서트 가져오기를 실패 했습니다.');
       }
     });
-  }, []);
+  }, [account]);
   return (
     <div style={{ width: '85%', margin: '2rem auto' }}>
-      {concerts.length == 0 ? <div>등록하신 공연이 없습니다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}
+      {concerts.length === 0 ? <div>등록하신 공연이 없습니다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}
     </div>
   );
 };

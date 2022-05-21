@@ -182,7 +182,7 @@ function ConcertUploadPage(props) {
         });
       }
     });
-  }, []);
+  }, [account, navigate]);
   return (
     <div className={uploadStyle.wrapper}>
       <Form onSubmit={onSubmit}>
