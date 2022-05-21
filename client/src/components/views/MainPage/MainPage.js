@@ -2,25 +2,41 @@ import Meta from 'antd-v3/lib/card/Meta';
 import Axios from 'axios';
 import { Col, Typography, Row } from 'antd-v3';
 import React, { useEffect, useState } from 'react';
+import { Form } from 'react-bootstrap';
 import concertStyle from './MainPage.module.css';
+
 const { Title } = Typography;
+
+const sortOption = [
+  { value: 0, label: '공연날짜순' },
+  { value: 1, label: '최신순' },
+  { value: 2, label: '가나다순' },
+  { value: 3, label: '예약마감순' },
+];
 
 const MainPage = () => {
   const [concerts, setConcerts] = useState([]);
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState(0);
 
   const onSearchChange = (e) => {
     setSearch(e.currentTarget.value);
   };
+
+  const onSortChange = (e) => {
+    setSort(e.currentTarget.value);
+  };
   useEffect(() => {
-    Axios.get('http://localhost:5000/api/concert/getConcerts', { params: { search: search } }).then((response) => {
-      if (response.data.success) {
-        setConcerts(response.data.concerts);
-      } else {
-        alert('콘서트 가져오기를 실패 했습니다.');
+    Axios.get('http://localhost:5000/api/concert/getConcerts', { params: { search: search, sort: sort } }).then(
+      (response) => {
+        if (response.data.success) {
+          setConcerts(response.data.concerts);
+        } else {
+          alert('콘서트 가져오기를 실패 했습니다.');
+        }
       }
-    });
-  }, [search]);
+    );
+  }, [search, sort]);
   const renderCards = concerts.map((concert, index) => {
     return (
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
@@ -65,16 +81,33 @@ const MainPage = () => {
   return (
     <div style={{ width: '85%', margin: '2rem auto' }}>
       <Title level={2}>
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <input
-            type="search"
-            style={{ width: '250px', height: '30px', fontSize: '25px' }}
-            placeholder="Search..."
-            onChange={onSearchChange}
-          />
+        <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex' }}>
+            <input
+              type="search"
+              style={{ width: '250px', height: '30px', fontSize: '15px' }}
+              placeholder="Search..."
+              onChange={onSearchChange}
+            />
+          </div>
+          <div style={{ display: 'flex' }}>
+            <Form.Select
+              size="sm"
+              style={{ width: '80px', height: '30px', fontSize: '5px' }}
+              value={sort}
+              onChange={onSortChange}
+            >
+              {sortOption.map((item, index) => (
+                <option key={index} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </Form.Select>
+          </div>
         </div>
       </Title>
       <hr />
+
       {concerts.length === 0 ? <div>입력하신 공연 없다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}
     </div>
   );
