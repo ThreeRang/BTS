@@ -45,7 +45,8 @@ router.get("/getConcerts", (req, res) => {
         });
     }
   } else {
-    if (sort === 0) {
+    if (sort == 0) {
+      console.log(0);
       Concert.find({
         "concertInfo.concertTitle": { $regex: search, $options: "i" },
       })
@@ -54,7 +55,8 @@ router.get("/getConcerts", (req, res) => {
           if (err) return res.status(400).json({ success: false, err });
           return res.status(200).json({ success: true, concerts });
         });
-    } else if (sort === 1) {
+    } else if (sort == 1) {
+      console.log(1);
       Concert.find({
         "concertInfo.concertTitle": { $regex: search, $options: "i" },
       })
@@ -63,7 +65,8 @@ router.get("/getConcerts", (req, res) => {
           if (err) return res.status(400).json({ success: false, err });
           return res.status(200).json({ success: true, concerts });
         });
-    } else if (sort === 2) {
+    } else if (sort == 2) {
+      console.log(2);
       Concert.find({
         "concertInfo.concertTitle": { $regex: search, $options: "i" },
       })
@@ -73,6 +76,7 @@ router.get("/getConcerts", (req, res) => {
           return res.status(200).json({ success: true, concerts });
         });
     } else {
+      console.log(3);
       Concert.find({
         "concertInfo.concertTitle": { $regex: search, $options: "i" },
       })
