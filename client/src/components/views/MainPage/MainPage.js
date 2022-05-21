@@ -75,7 +75,7 @@ const MainPage = () => {
         </div>
       </Title>
       <hr />
-      <Row gutter={[32, 16]}>{renderCards}</Row>
+      {concerts.length === 0 ? <div>입력하신 공연 없다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}
     </div>
   );
 };
