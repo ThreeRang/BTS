@@ -35,16 +35,28 @@ const MainPage = () => {
             style={{ marginLeft: '1rem' }}
             title={concert.concertInfo.concertTitle}
             description={
-              concert.concertInfo.description.length > 15
-                ? `${concert.concertInfo.description.slice(0, 15)} ...`
+              concert.concertInfo.description.length > 30
+                ? `${concert.concertInfo.description.slice(0, 30)} ...`
                 : concert.concertInfo.description
             }
           />
+          <br />
+          <Meta style={{ marginLeft: '1rem' }} description={`공연 날짜 : ${concert.concertInfo.concertDate.date} `} />
+
+          <Meta
+            style={{ marginLeft: '1rem' }}
+            description={`예약 마감 : ${concert.concertInfo.reservation.close.date}`}
+          />
+
+          <div>
+            <p> </p>
+            <p></p>
+          </div>
           <hr />
           <p>
             &nbsp;&nbsp;from :&nbsp;
-            {concert.concertInfo._id.length > 15
-              ? `${concert.concertInfo._id.slice(0, 15)}...`
+            {concert.concertInfo._id.length > 25
+              ? `${concert.concertInfo._id.slice(0, 25)}...`
               : concert.concertInfo._id}
           </p>
         </div>
