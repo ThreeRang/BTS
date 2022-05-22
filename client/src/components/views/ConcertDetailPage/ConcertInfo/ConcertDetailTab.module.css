@@ -1,0 +1,18 @@
+.wrapper {
+  width: 50%;
+  text-align: left;
+  margin: auto auto;
+}
+
+.concertTextBox {
+  text-align: center;
+}
+
+.concertTextInfo {
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.concertTextInfoUp {
+  margin: 10px;
+}

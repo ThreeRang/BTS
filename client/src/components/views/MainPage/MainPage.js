@@ -2,9 +2,12 @@ import Meta from 'antd-v3/lib/card/Meta';
 import Axios from 'axios';
 import { Col, Typography, Row } from 'antd-v3';
 import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
 import concertStyle from './MainPage.module.css';
+import { Input, Select } from 'antd-v3';
+import Avatar from 'react-avatar';
 
+const { Option } = Select;
+const { Search } = Input;
 const { Title } = Typography;
 
 const sortOption = [
@@ -23,8 +26,8 @@ const MainPage = () => {
     setSearch(e.currentTarget.value);
   };
 
-  const onSortChange = (e) => {
-    setSort(e.currentTarget.value);
+  const onSortChange = (slectSort) => {
+    setSort(slectSort);
   };
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcerts', { params: { search: search, sort: sort } }).then(
@@ -61,19 +64,23 @@ const MainPage = () => {
             }
           />
           <br />
-          <Meta style={{ marginLeft: '1rem' }} description={`공연 날짜 : ${concert.concertInfo.concertDate.date} `} />
-
           <Meta
-            style={{ marginLeft: '1rem' }}
-            description={`예약 마감 : ${concert.concertInfo.reservation.close.date}`}
+            style={{ marginLeft: '1rem', fontSize: '12px' }}
+            description={`Date : ${concert.concertInfo.concertDate.date} `}
+          />
+          <Meta
+            style={{ marginLeft: '1rem', fontSize: '12px' }}
+            description={`Reservation close : ${concert.concertInfo.reservation.close.date}`}
           />
           <hr />
-          <p>
-            &nbsp;&nbsp;from :&nbsp;
-            {concert.concertInfo._id.length > 25
-              ? `${concert.concertInfo._id.slice(0, 25)}...`
+          &nbsp;
+          <Avatar facebookId="100008343750912" size="30" round={true} />
+          <span>
+            &nbsp;&nbsp;
+            {concert.concertInfo._id.length > 20
+              ? `${concert.concertInfo._id.slice(0, 20)}...`
               : concert.concertInfo._id}
-          </p>
+          </span>
         </div>
       </Col>
     );
@@ -83,32 +90,22 @@ const MainPage = () => {
       <Title level={2}>
         <div style={{ display: 'flex' }}>
           <div style={{ display: 'flex' }}>
-            <input
-              type="search"
-              style={{ width: '250px', height: '30px', fontSize: '15px' }}
-              placeholder="Search..."
-              onChange={onSearchChange}
-            />
+            <Search placeholder="Search..." onChange={onSearchChange} value={search} style={{ width: 200 }} />
           </div>
           <div style={{ display: 'flex' }}>
-            <Form.Select
-              size="sm"
-              style={{ width: '80px', height: '30px', fontSize: '5px' }}
-              value={sort}
-              onChange={onSortChange}
-            >
+            <Select defaultValue="공연마감순" style={{ width: 120 }} onChange={onSortChange}>
               {sortOption.map((item, index) => (
-                <option key={index} value={item.value}>
+                <Option key={index} value={item.value}>
                   {item.label}
-                </option>
+                </Option>
               ))}
-            </Form.Select>
+            </Select>
           </div>
         </div>
       </Title>
       <hr />
 
-      {concerts.length === 0 ? <div>입력하신 공연 없다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}
+      {concerts.length === 0 ? <div>입력하신 공연이 없습니다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}
     </div>
   );
 };

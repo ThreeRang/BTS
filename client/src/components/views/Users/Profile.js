@@ -2,19 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Axios from 'axios';
 import Avatar from 'react-avatar';
-import { Button } from 'antd-v3';
-import profileStyle from './Profile.module.css';
-import { Nav } from 'react-bootstrap';
-import PurchaseDetail from './PurchaseDetail';
-import RegisterDetail from './RegisterDetail';
+import { Button, Tabs } from 'antd-v3';
 
+import PurchaseHistory from './ProfileHistory/PurchaseHistory';
+import UploadHistory from './ProfileHistory/UploadHistory';
+import profileStyle from './Profile.module.css';
+
+const { TabPane } = Tabs;
 const Profile = () => {
   const account = useParams().userAccount;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState(0);
   const [img, setImg] = useState('');
-  const [tab, setTab] = useState('');
 
   const variables = {
     _id: account,
@@ -43,9 +43,7 @@ const Profile = () => {
         alert('유저 정보를 읽는데 실패하였습니다.');
       }
     });
-  }, []);
-
-
+  }, [account]);
   return (
     <div className={profileStyle.wrapper}>
       <div className={profileStyle.profileBackground}></div>
@@ -75,43 +73,22 @@ const Profile = () => {
               <a href={`/users/Profile/Update/${account}`}>수정</a>
             </Button>
           </div>
-          <div className="contents">
-            <Nav>
-              <Nav.Item>
-                <Nav.Link onClick={() => setTab("purchase")}>
-                  구매 내역
-                </Nav.Link>
-                &nbsp;
-                <Nav.Link onClick={() => setTab("register")}>
-                  등록 내역
-                </Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </div>
           <hr />
-          <TabContent tab={tab} />
+
+          <div>
+            <Tabs defaultActiveKey="1">
+              <TabPane tab="구매내역" key="1">
+                <PurchaseHistory account={account} />
+              </TabPane>
+              <TabPane tab="등록내역" key="2">
+                <UploadHistory account={account} />
+              </TabPane>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>
   );
-
-  function TabContent(props) {
-    if (props.tab === 'purchase')
-      return (
-        <div>
-          <PurchaseDetail />
-        </div>
-      );
-
-    else if (props.tab === "register")
-      return (
-        <div>
-          <RegisterDetail />
-        </div>
-      );
-
-    else return (<div></div>);
-  };
 };
 
 export default Profile;
