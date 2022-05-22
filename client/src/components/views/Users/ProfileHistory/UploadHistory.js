@@ -10,7 +10,7 @@ const UploadHistory = ({ account }) => {
   const renderCards = concerts.map((concert, index) => {
     return (
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
-        <div className={concertStyle.concertImage}>
+        <div style={{ textAlign: 'left' }} className={concertStyle.concertImage}>
           <a href={`/concert/detail/${concert._id}`}>
             <div>
               <img
@@ -31,11 +31,14 @@ const UploadHistory = ({ account }) => {
             }
           />
           <br />
-          <Meta style={{ marginLeft: '1rem' }} description={`공연 날짜 : ${concert.concertInfo.concertDate.date} `} />
+          <Meta
+            style={{ marginLeft: '1rem', fontSize: '12px' }}
+            description={`Date : ${concert.concertInfo.concertDate.date} `}
+          />
 
           <Meta
-            style={{ marginLeft: '1rem' }}
-            description={`예약 마감 : ${concert.concertInfo.reservation.close.date}`}
+            style={{ marginLeft: '1rem', fontSize: '12px' }}
+            description={`Reservation close : ${concert.concertInfo.reservation.close.date}`}
           />
           <hr />
           <p>
