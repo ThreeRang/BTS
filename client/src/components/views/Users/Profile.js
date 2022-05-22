@@ -32,9 +32,6 @@ const Profile = () => {
       });
     }
   };
-  const callback = (key) => {
-    console.log(key);
-  };
   useEffect(() => {
     Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
       if (response.data.success) {
@@ -79,7 +76,7 @@ const Profile = () => {
           <hr />
 
           <div>
-            <Tabs defaultActiveKey="1" onChange={callback}>
+            <Tabs defaultActiveKey="1">
               <TabPane tab="구매내역" key="1">
                 <PurchaseHistory account={account} />
               </TabPane>
