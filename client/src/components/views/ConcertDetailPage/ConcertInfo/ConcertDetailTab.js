@@ -59,7 +59,7 @@ const ConcertDetailTab = ({ concertId }) => {
           <div style={{ float: 'right' }}>
             {writerAccount === userAccount ? (
               <div>
-                <a href="">✏</a>
+                <a href={`/concert/detail/${concertId}/update`}>✏</a>
               </div>
             ) : (
               <></>
