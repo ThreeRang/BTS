@@ -11,6 +11,8 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
+    event info(string name, address own, uint256 id, string URI); //event정의
+
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         override(ERC721, ERC721Enumerable)
@@ -57,6 +59,9 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         uint256 id = _tokenIds.current();
         _safeMint(owner, id);
         _setTokenURI(id, metadataURI);
+
+        emit info("In sol : success minting!", owner, id, metadataURI); 
+
         return id;
     }
 }

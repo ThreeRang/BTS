@@ -4,6 +4,9 @@ import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import uploadStyle from './ConcertUploadPage.module.css';
+// import MintTicketTokenJSON from './MintTicketToken.json';
+// import MintTicketToken from '../../../abi/MintTicketToken.json';
+// import { create } from 'ipfs-http-client';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -27,6 +30,74 @@ function ConcertUploadPage(props) {
   const [concertImagePath, setconcertImagePath] = useState('');
   const [seatImagePath, setSeatImagePath] = useState('');
   const [ticketImagePath, setTicketImagePath] = useState('');
+
+  /*conect smart contract*/
+
+  const [metadataURI, setMetadataURI] = useState('');
+  const [smartContractAddress, setSmartContractAddress] = useState('');
+
+  /*for ipfs '/ip4/127.0.0.1/tcp/5001'*/
+  // const ipfs = create({
+  //   host: 'ipfs.infura.io',
+  //   port: 5001,
+  //   protocol: 'https',
+  // });
+  // const [files, setFiles] = useState({});
+
+  const onSubmitNft = async () => {
+    //ipfs에 이미지 업로드하고 hash값 리턴 == metadataURI
+
+    //minting
+    //metadataURI 세팅
+    const Web3 = require('web3');
+    const web3 = new Web3(window.ethereum);
+    const MintTicketTokenJSON = require('./MintTicketToken.json');
+    const mintABI = MintTicketTokenJSON.abi;
+    //abi와 smartcontractaddress필요
+    const mintContract = new web3.eth.Contract(mintABI, smartContractAddress);
+    setMetadataURI('QmNU5x7PGrJ4fimGWfgzamXL2fq7ZLiZ5qqkkg8L1aqTFk');
+
+    console.log('do smartcontract');
+    console.log(account);
+    //smartContractAddress 세팅
+    const nonce = await web3.eth.getTransactionCount(account, 'latest');
+    //tx세팅
+    //from, to, nonce, gas, data가 ''로 감싸져야하는데 안감싸지는 이슈가 있음
+    const tx = {
+      from: account,
+      to: smartContractAddress,
+      nonce: nonce,
+      gas: 500000,
+      data: mintContract.methods.mintTicketToken(account, metadataURI).encodeABI(),
+    };
+    //tx작성, tx와 private key필요
+    const signedTx = await web3.eth.accounts.signTransaction(
+      tx,
+      '0e795200c6137b244dcbf5fb5e598676b1e71c76447a4369c50183470567d1b2'
+    );
+    //영수증 발행
+    const transactionReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+    console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+
+    // mintContract.methods
+    //   .mintTicketToken(account, metadataURI)
+    //   .call({ from: '0x0d8Db18d54e7B4D0f75BCAb948815a4b15bABB01' })
+    //   .then((result) => {
+    //     console.log(result);
+    //   });
+
+    console.log('finish mint contract!');
+
+    // .send({ from: '0x0d8Db18d54e7B4D0f75BCAb948815a4b15bABB01' }, (err, result) => {
+    //   if (!err) {
+    //     console.log('Transaction successfully sended');
+    //     console.log('hash: ', result);
+    //   } else {
+    //     console.err(err);
+    //   }
+    // });
+    // await instance.mintTicketToken(account, metadataURI);
+  };
 
   /*-------------------onChange----------------------*/
   const onTitleChange = (e) => {
@@ -153,16 +224,20 @@ function ConcertUploadPage(props) {
         seatImage: seatImagePath,
       },
     };
-    Axios.post('http://localhost:5000/api/upload/uploadConcert', variables).then((response) => {
-      if (response.data.success) {
-        message.success('성공적으로 업로드 하였습니다.');
-        setTimeout(() => {
-          navigate('/');
-        }, 3000);
-      } else {
-        alert('콘서트 업로드에 실패 하였습니다.');
-      }
-    });
+    Axios.post('http://localhost:5000/api/upload/uploadConcert', variables)
+      .then((response) => {
+        if (response.data.success) {
+          message.success('성공적으로 업로드 하였습니다.');
+          setTimeout(() => {
+            navigate('/');
+          }, 3000);
+        } else {
+          alert('콘서트 업로드에 실패 하였습니다.');
+        }
+      })
+      .then(() => {
+        onSubmitNft();
+      });
   };
 
   useEffect(() => {
@@ -182,6 +257,8 @@ function ConcertUploadPage(props) {
         });
       }
     });
+    /*connect smartcontract */
+    setSmartContractAddress('0x0d8Db18d54e7B4D0f75BCAb948815a4b15bABB01');
   }, []);
   return (
     <div className={uploadStyle.wrapper}>
