@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Typography, Button } from 'antd-v3';
+import detailTabStyle from './ConcertDetailTab.module.css';
+
 const { Title } = Typography;
 const ConcertDetailTab = ({ concertId }) => {
-  const [account, setAccount] = useState('');
+  const [writerAccount, setWriterAccount] = useState('');
+  const [userAccount, setUserAccount] = useState('');
   const [concertTitle, setConcertTitle] = useState('');
   const [description, setDescription] = useState('');
   const [concertDate, setConcertDate] = useState('');
@@ -12,10 +15,20 @@ const ConcertDetailTab = ({ concertId }) => {
   const [reservationOpen, setReservationOpen] = useState('');
   const [reservationClose, setReservationClose] = useState('');
 
+  const onInit = async () => {
+    await window.ethereum.enable();
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    setUserAccount(accounts[0]);
+  };
+
+  useEffect(() => {
+    onInit();
+  }, [userAccount]);
+
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
       if (response.data.success) {
-        setAccount(response.data.concert.concertInfo._id);
+        setWriterAccount(response.data.concert.concertInfo._id);
         setConcertTitle(response.data.concert.concertInfo.concertTitle);
         setDescription(response.data.concert.concertInfo.description);
         setConcertDate(
@@ -39,23 +52,34 @@ const ConcertDetailTab = ({ concertId }) => {
     });
   }, [concertId]);
   return (
-    <div style={{ width: '50%', textAlign: 'left', margin: 'auto auto' }}>
-      <div style={{ textAlign: 'center' }}>
-        <Title level={1}>{concertTitle}</Title>
+    <div className={detailTabStyle.wrapper}>
+      <div className={detailTabStyle.concertTextBox}>
+        <div style={{ display: 'block' }}>
+          <Title level={1}>{concertTitle}</Title>
+          <div style={{ float: 'right' }}>
+            {writerAccount === userAccount ? (
+              <div>
+                <a href="">✏</a>
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
+        </div>
         <div>
           <Button
             onClick={() => {
-              navigator.clipboard.writeText(account);
+              navigator.clipboard.writeText(writerAccount);
               alert('주소 복사 완료!');
             }}
           >
-            {account.length > 15 ? '✍ ' + account.substring(0, 15) + '...' : '✍ ' + account}
+            {writerAccount.length > 15 ? '✍ ' + writerAccount.substring(0, 15) + '...' : '✍ ' + writerAccount}
           </Button>
         </div>
       </div>
       <br />
-      <div style={{ border: '1px solid black', borderRadius: '10px' }}>
-        <div style={{ margin: '10px' }}>
+      <div className={detailTabStyle.concertTextInfo}>
+        <div className={detailTabStyle.concertTextInfoUp}>
           <p>Date : {concertDate}</p>
           <p>Address : {concertAddress}</p>
           <p>

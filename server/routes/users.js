@@ -9,7 +9,6 @@ const { User } = require("../models/User");
 
 router.get("/findUser", (req, res) => {
   const { _id } = req.query;
-  console.log(_id);
 
   User.findOne({ _id: _id }).exec((err, userInfo) => {
     if (err) return res.status(400).send(err);

@@ -43,7 +43,6 @@ function RightMenu(props) {
   };
 
   connectWallet();
-  console.log(account);
   if (!account) {
     return (
       <Menu mode={props.mode}>
