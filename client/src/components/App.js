@@ -6,7 +6,8 @@ import ProfileUpdate from './views/Users/ProfileUpdate.js';
 import MainPage from './views/MainPage/MainPage.js';
 import ConcertUploadPage from './views/ConcertUploadPage/ConcertUploadPage.js';
 import TicketPage from './views/TicketPage/TicketPage.js';
-import ConcertDetailPage from './views/ConcertDetailPage/ConcertDetailPage';
+import ConcertDetailPage from './views/ConcertDetailPage/ConcertDetailPage.js';
+import ConcertDetailUpload from './views/ConcertDetailPage/ConcertInfo/ConcertDetailUpdate/ConcertDetailUpdate.js';
 //import "./App.css";
 
 const App = () => {
@@ -22,6 +23,7 @@ const App = () => {
           <Route path={'/users/Profile/Update/:userAccount'} element={<ProfileUpdate />}></Route>
           <Route path={'/concert/detail/:concertId'} element={<ConcertDetailPage />}></Route>
           <Route path={'/concert/Ticket'} element={<TicketPage />}></Route>
+          <Route path={'/concert/detail/:concertId/update'} element={<ConcertDetailUpload />}></Route>
         </Routes>
       </div>
     </BrowserRouter>
