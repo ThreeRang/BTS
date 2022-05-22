@@ -95,4 +95,12 @@ router.get("/getUserConcerts", (req, res) => {
       return res.status(200).json({ success: true, concerts });
     });
 });
+
+router.get("/getConcertInfo", (req, res) => {
+  const { _id } = req.query;
+  Concert.findOne({ _id: _id }).exec((err, concert) => {
+    if (err) return res.status(400).json({ success: false, err });
+    return res.status(200).json({ success: true, concert });
+  });
+});
 module.exports = router;

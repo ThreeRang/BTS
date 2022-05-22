@@ -4,6 +4,7 @@ import { Col, Typography, Row } from 'antd-v3';
 import React, { useEffect, useState } from 'react';
 import concertStyle from './MainPage.module.css';
 import { Input, Select } from 'antd-v3';
+import Avatar from 'react-avatar';
 
 const { Option } = Select;
 const { Search } = Input;
@@ -63,19 +64,23 @@ const MainPage = () => {
             }
           />
           <br />
-          <Meta style={{ marginLeft: '1rem' }} description={`공연 날짜 : ${concert.concertInfo.concertDate.date} `} />
-
           <Meta
-            style={{ marginLeft: '1rem' }}
-            description={`예약 마감 : ${concert.concertInfo.reservation.close.date}`}
+            style={{ marginLeft: '1rem', fontSize: '12px' }}
+            description={`Date : ${concert.concertInfo.concertDate.date} `}
+          />
+          <Meta
+            style={{ marginLeft: '1rem', fontSize: '12px' }}
+            description={`Reservation close : ${concert.concertInfo.reservation.close.date}`}
           />
           <hr />
-          <p>
-            &nbsp;&nbsp;from :&nbsp;
-            {concert.concertInfo._id.length > 25
-              ? `${concert.concertInfo._id.slice(0, 25)}...`
+          &nbsp;
+          <Avatar facebookId="100008343750912" size="30" round={true} />
+          <span>
+            &nbsp;&nbsp;
+            {concert.concertInfo._id.length > 20
+              ? `${concert.concertInfo._id.slice(0, 20)}...`
               : concert.concertInfo._id}
-          </p>
+          </span>
         </div>
       </Col>
     );
