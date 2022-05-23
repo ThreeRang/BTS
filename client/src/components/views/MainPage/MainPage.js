@@ -22,7 +22,8 @@ const MainPage = () => {
   const [concerts, setConcerts] = useState([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState(0);
-
+  /* const [userImage, setUserImage] = useState('');
+  const [account, setAccount] = useState(''); */
   const onSearchChange = (e) => {
     setSearch(e.currentTarget.value);
   };
@@ -30,6 +31,7 @@ const MainPage = () => {
   const onSortChange = (slectSort) => {
     setSort(slectSort);
   };
+
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcerts', { params: { search: search, sort: sort } }).then(
       (response) => {
@@ -74,8 +76,12 @@ const MainPage = () => {
             description={`Reservation close : ${concert.concertInfo.reservation.close.date}`}
           />
           <hr />
-          &nbsp;
-          <Avatar facebookId="100008343750912" size="30" round={true} />
+          &nbsp;&nbsp;
+          {concert.image.userImage === '' ? (
+            <Avatar facebookId="100008343750912" size="25" round={true} />
+          ) : (
+            <Avatar src={`http://localhost:5000/${concert.image.userImage}`} size="25" round={true} />
+          )}
           <span>
             &nbsp;&nbsp;
             {concert.concertInfo._id.length > 20
