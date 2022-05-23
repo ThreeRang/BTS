@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import concertStyle from './MainPage.module.css';
 import { Input, Select } from 'antd-v3';
 import Avatar from 'react-avatar';
+import Banner from './Banner/Banner';
 
 const { Option } = Select;
 const { Search } = Input;
@@ -87,12 +88,14 @@ const MainPage = () => {
   });
   return (
     <div style={{ width: '85%', margin: '2rem auto' }}>
+      <Banner />
+      <br />
       <Title level={2}>
-        <div style={{ display: 'flex' }}>
-          <div style={{ display: 'flex' }}>
+        <div>
+          <div style={{ display: 'flex', float: 'left' }}>
             <Search placeholder="Search..." onChange={onSearchChange} value={search} style={{ width: 200 }} />
           </div>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', float: 'right' }}>
             <Select defaultValue="공연마감순" style={{ width: 120 }} onChange={onSortChange}>
               {sortOption.map((item, index) => (
                 <Option key={index} value={item.value}>
@@ -103,6 +106,7 @@ const MainPage = () => {
           </div>
         </div>
       </Title>
+      <br />
       <hr />
 
       {concerts.length === 0 ? <div>입력하신 공연이 없습니다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}

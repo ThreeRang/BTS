@@ -23,7 +23,7 @@ const ConcertDetailPage = () => {
   return (
     <div className={detailPageStyle.wrapper}>
       <div className={detailPageStyle.profileImage}>
-        <img src={`http://localhost:5000/${concertImage}`} />
+        <img src={`http://localhost:5000/${concertImage}`} alt="concertimage" />
       </div>
       <div>
         <Tabs defaultActiveKey="1">
