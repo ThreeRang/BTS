@@ -71,6 +71,10 @@ const concertSchema = mongoose.Schema(
         type: String,
         default: "",
       },
+      userImage: {
+        type: String,
+        default: "",
+      },
     },
   },
   { timestamps: true }
