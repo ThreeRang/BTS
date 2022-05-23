@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Axios from 'axios';
 import Avatar from 'react-avatar';
-import { Button } from 'antd-v3';
+import { Button, Tabs } from 'antd-v3';
 
+import PurchaseHistory from './ProfileHistory/PurchaseHistory';
+import UploadHistory from './ProfileHistory/UploadHistory';
 import profileStyle from './Profile.module.css';
+
+const { TabPane } = Tabs;
 const Profile = () => {
   const account = useParams().userAccount;
   const [name, setName] = useState('');
@@ -40,7 +44,7 @@ const Profile = () => {
         alert('유저 정보를 읽는데 실패하였습니다.');
       }
     });
-  }, []);
+  }, [account]);
   return (
     <div className={profileStyle.wrapper}>
       <div className={profileStyle.profileBackground}></div>
@@ -71,6 +75,17 @@ const Profile = () => {
             </Button>
           </div>
           <hr />
+
+          <div>
+            <Tabs defaultActiveKey="1">
+              <TabPane tab="구매내역" key="1">
+                <PurchaseHistory account={account} />
+              </TabPane>
+              <TabPane tab="등록내역" key="2">
+                <UploadHistory account={account} />
+              </TabPane>
+            </Tabs>
+          </div>
         </div>
       </div>
     </div>

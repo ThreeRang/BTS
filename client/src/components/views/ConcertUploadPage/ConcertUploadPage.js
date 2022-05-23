@@ -259,7 +259,7 @@ function ConcertUploadPage(props) {
     });
     /*connect smartcontract */
     setSmartContractAddress('0x0d8Db18d54e7B4D0f75BCAb948815a4b15bABB01');
-  }, []);
+  }, [account, navigate]);
   return (
     <div className={uploadStyle.wrapper}>
       <Form onSubmit={onSubmit}>
