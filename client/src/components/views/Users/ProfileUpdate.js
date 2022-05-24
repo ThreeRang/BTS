@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, message, Input, Icon } from 'antd-v3';
 import { useParams } from 'react-router-dom';
 import Dropzone from 'react-dropzone';
@@ -6,26 +6,27 @@ import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import profileUpdateStyle from './ProfileUpdate.module.css';
+import { set } from 'mongoose';
 
 const ProfileUpdate = () => {
   const account = useParams().userAccount;
-  const [updateName, setupdateName] = useState('');
-  const [updateEmail, setupdateEmail] = useState('');
+  const [updateName, setUpdateName] = useState('');
+  const [updateEmail, setUpdateEmail] = useState('');
   const [userImagePath, setUserImagePath] = useState('');
   const navigate = useNavigate();
 
   const onChangeName = (e) => {
     if (!e.target.value) {
-      setupdateName('none');
+      setUpdateName('none');
     } else {
-      setupdateName(e.target.value);
+      setUpdateName(e.target.value);
     }
   };
   const onChangeEmail = (e) => {
     if (!e.target.value) {
-      setupdateEmail('none');
+      setUpdateEmail('none');
     } else {
-      setupdateEmail(e.target.value);
+      setUpdateEmail(e.target.value);
     }
   };
 
@@ -68,6 +69,18 @@ const ProfileUpdate = () => {
     }
   };
 
+  useEffect(() => {
+    Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
+      if (response.data.success) {
+        setUpdateName(response.data.userInfo.name);
+        setUpdateEmail(response.data.userInfo.email);
+        setUserImagePath(response.data.userInfo.image);
+      } else {
+        alert('유저 정보를 읽는데 실패하였습니다.');
+      }
+    });
+  }, []);
+
   return (
     <div className={profileUpdateStyle.wrapper}>
       <div className={profileUpdateStyle.imageBox}>
@@ -94,11 +107,11 @@ const ProfileUpdate = () => {
         <br />
         <div className={profileUpdateStyle.textBox}>
           <label>Name</label>
-          <Input alt="이름을 입력하세요" onChange={onChangeName} />
+          <Input alt="이름을 입력하세요" value={updateName} onChange={onChangeName} />
           <br />
           <br />
           <label>E-mail</label>
-          <Input alt="이메일을 입력해주세요" onChange={onChangeEmail} />
+          <Input alt="이메일을 입력해주세요" value={updateEmail} onChange={onChangeEmail} />
           <br />
           <br />
 
