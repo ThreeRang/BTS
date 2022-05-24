@@ -6,7 +6,6 @@ import Axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 import profileUpdateStyle from './ProfileUpdate.module.css';
-import { set } from 'mongoose';
 
 const ProfileUpdate = () => {
   const account = useParams().userAccount;
@@ -79,7 +78,7 @@ const ProfileUpdate = () => {
         alert('유저 정보를 읽는데 실패하였습니다.');
       }
     });
-  }, []);
+  }, [account]);
 
   return (
     <div className={profileUpdateStyle.wrapper}>
