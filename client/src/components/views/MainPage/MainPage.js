@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import concertStyle from './MainPage.module.css';
 import { Input, Select } from 'antd-v3';
 import Avatar from 'react-avatar';
+import Banner from './Banner/Banner';
 
 const { Option } = Select;
 const { Search } = Input;
@@ -21,7 +22,8 @@ const MainPage = () => {
   const [concerts, setConcerts] = useState([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState(0);
-
+  /* const [userImage, setUserImage] = useState('');
+  const [account, setAccount] = useState(''); */
   const onSearchChange = (e) => {
     setSearch(e.currentTarget.value);
   };
@@ -29,6 +31,7 @@ const MainPage = () => {
   const onSortChange = (slectSort) => {
     setSort(slectSort);
   };
+
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcerts', { params: { search: search, sort: sort } }).then(
       (response) => {
@@ -73,8 +76,12 @@ const MainPage = () => {
             description={`Reservation close : ${concert.concertInfo.reservation.close.date}`}
           />
           <hr />
-          &nbsp;
-          <Avatar facebookId="100008343750912" size="30" round={true} />
+          &nbsp;&nbsp;
+          {concert.image.userImage === '' ? (
+            <Avatar facebookId="100008343750912" size="25" round={true} />
+          ) : (
+            <Avatar src={`http://localhost:5000/${concert.image.userImage}`} size="25" round={true} />
+          )}
           <span>
             &nbsp;&nbsp;
             {concert.concertInfo._id.length > 20
@@ -87,12 +94,14 @@ const MainPage = () => {
   });
   return (
     <div style={{ width: '85%', margin: '2rem auto' }}>
+      <Banner />
+      <br />
       <Title level={2}>
-        <div style={{ display: 'flex' }}>
-          <div style={{ display: 'flex' }}>
+        <div>
+          <div style={{ display: 'flex', float: 'left' }}>
             <Search placeholder="Search..." onChange={onSearchChange} value={search} style={{ width: 200 }} />
           </div>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', float: 'right' }}>
             <Select defaultValue="공연마감순" style={{ width: 120 }} onChange={onSortChange}>
               {sortOption.map((item, index) => (
                 <Option key={index} value={item.value}>
@@ -103,6 +112,7 @@ const MainPage = () => {
           </div>
         </div>
       </Title>
+      <br />
       <hr />
 
       {concerts.length === 0 ? <div>입력하신 공연이 없습니다.</div> : <Row gutter={[32, 16]}>{renderCards}</Row>}
