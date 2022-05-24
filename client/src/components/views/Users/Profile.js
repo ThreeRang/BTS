@@ -35,6 +35,7 @@ const Profile = () => {
   useEffect(() => {
     Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
       if (response.data.success) {
+        console.log(response);
         setName(response.data.userInfo.name);
         setEmail(response.data.userInfo.email);
         setRole(response.data.userInfo.role);
