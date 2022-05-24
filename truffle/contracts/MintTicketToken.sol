@@ -10,8 +10,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-
-    event info(string name, address own, uint256 id, string URI); //event정의
+    //공연좌석에 따른 티켓Id
+    mapping(string => mapping(uint256 => uint256)) private ticketIdOfConcertSeatnum;
+    //event정의
+    event info(string name, address own, uint256 id, string URI); 
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
@@ -51,14 +53,32 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         //_setBaseURI("https://ipfs.io/ipfs/");
     }
 
-    function mintTicketToken(address owner, string memory metadataURI)
+    function setTicketIdOfConcertSeatnum(string memory concertId, uint256 seetnum, uint256 tokenId) 
+        internal
+        virtual
+    {
+        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+        ticketIdOfConcertSeatnum[concertId][seetnum] = tokenId;
+    }
+
+    function _ticketIdOfConcertSeatnum(string memory concertId, uint256 seetnum) 
+        public 
+        view 
+        returns(uint256)
+    {
+        return ticketIdOfConcertSeatnum[concertId][seetnum];
+    }
+
+    function mintTicketToken(address owner, string memory metadataURI, string memory concertId, uint256 seetnum)
         public
-        returns(uint256){
+        returns(uint256)
+    {
         _tokenIds.increment();
         
         uint256 id = _tokenIds.current();
         _safeMint(owner, id);
         _setTokenURI(id, metadataURI);
+        setTicketIdOfConcertSeatnum(concertId, seetnum, id);
 
         emit info("In sol : success minting!", owner, id, metadataURI); 
 
