@@ -14,7 +14,7 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState(0);
-  const [img, setImg] = useState('');
+  const [image, setImage] = useState('');
 
   const variables = {
     _id: account,
@@ -39,7 +39,7 @@ const Profile = () => {
         setName(response.data.userInfo.name);
         setEmail(response.data.userInfo.email);
         setRole(response.data.userInfo.role);
-        setImg(response.data.userInfo.img);
+        setImage(response.data.userInfo.image);
       } else {
         alert('유저 정보를 읽는데 실패하였습니다.');
       }
@@ -50,7 +50,11 @@ const Profile = () => {
       <div className={profileStyle.profileBackground}></div>
       <div className={profileStyle.profileInfo}>
         <div className={profileStyle.profileImg}>
-          <Avatar facebookId="100008343750912" size="150" round={true} />
+          {image === '' ? (
+            <Avatar facebookId="100008343750912" size="150" round={true} />
+          ) : (
+            <Avatar src={`http://localhost:5000/${image}`} size="150" round={true} />
+          )}
         </div>
         <br />
         <Button

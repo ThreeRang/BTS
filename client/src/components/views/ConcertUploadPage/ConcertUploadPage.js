@@ -30,6 +30,7 @@ function ConcertUploadPage(props) {
   const [concertImagePath, setconcertImagePath] = useState('');
   const [seatImagePath, setSeatImagePath] = useState('');
   const [ticketImagePath, setTicketImagePath] = useState('');
+  const [userImagePath, setUserImagePath] = useState('');
 
   /*conect smart contract*/
 
@@ -131,7 +132,6 @@ function ConcertUploadPage(props) {
     setReservationCloseDate(e.currentTarget.value);
   };
   const onCloseTimeChange = (e) => {
-    console.log(e.currentTarget.value);
     setReservationCloseTime(e.currentTarget.value);
   };
 
@@ -222,6 +222,7 @@ function ConcertUploadPage(props) {
         concertImage: concertImagePath,
         ticketImage: ticketImagePath,
         seatImage: seatImagePath,
+        userImage: userImagePath,
       },
     };
     Axios.post('http://localhost:5000/api/upload/uploadConcert', variables)
@@ -242,8 +243,10 @@ function ConcertUploadPage(props) {
 
   useEffect(() => {
     Axios.get('http://localhost:5000/api/users/userProfile', { params: { _id: account } }).then((response) => {
-      console.log(response.data);
       if (response.data.success) {
+        if (response.data.userInfo.image !== undefined) {
+          setUserImagePath(response.data.userInfo.image);
+        }
         if (response.data.userInfo.role === 0) {
           alert('권한이 없습니다.');
           setTimeout(() => {
