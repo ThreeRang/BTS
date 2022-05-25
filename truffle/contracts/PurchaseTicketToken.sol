@@ -20,8 +20,10 @@ contract PurchaseTicketToken{
     function setForSaleTicketToken(uint256 _tokenId, uint256 _ticketPrice) public{
         address ticketOwner = mintTicketTokenAddress.ownerOf(_tokenId);
 
-        require(_ticketPrice > 0, "Price is zero or lower");
-        
+        require(ticketOwner == msg.sender, "Caller is not ticket token owner.");
+        require(_ticketPrice > 0, "Price is zero or lower.");
+        require (mintTicketTokenAddress.isApprovedForAll(ticketOwner, address(this)), "ticket token owner did not approve token.");
+
         ticketTokenPrices[_tokenId] = _ticketPrice;
         onSaleTicketTokenArray.push(_tokenId);
     }
@@ -29,7 +31,9 @@ contract PurchaseTicketToken{
     function purchaseTicketToken(uint256 _tokenId) public payable{
         uint256 ticketPrice = ticketTokenPrices[_tokenId];
         address ticketOwner = mintTicketTokenAddress.ownerOf(_tokenId);
+
         require(ticketPrice > 0 , "Ticket Token not sale.");
+        require(ticketPrice <= msg.value, "Caller sent lower than price.");
         require(msg.value >= ticketPrice, "Caller sent lower than price");
 
         //msg.value : price보다 크거나 같은 값이 들어와야 된다.
