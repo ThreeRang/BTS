@@ -14,6 +14,8 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
     mapping(string => mapping(uint256 => uint256)) private _ticketIdOfConcertSeatnum;
     //티켓Id에 따른 가격
     mapping(uint256 => uint256) private _ticketPrices;
+    //티켓Id에 따른 좌석번호
+    mapping(uint256 => uint256) private _ticketSeatnum;
     //event정의
     event info(string name, address own, uint256 id, string URI, uint256 seatNum, uint256 price); 
 
@@ -68,6 +70,11 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         _ticketPrices[tokenId] = price;
     }
 
+    function _setTicketSeatnum(uint256 tokenId, uint256 seatnum) internal virtual{
+        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+        _ticketSeatnum[tokenId] = seatnum;
+    }
+
     function ticketIdOfConcertSeatnum(string memory concertId, uint256 seetnum) 
         public 
         view 
@@ -84,6 +91,14 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         return _ticketPrices[tokenId];
     }
 
+    function ticketSeatnum(uint256 tokenId) 
+        public 
+        view 
+        returns(uint256)
+    {
+        return _ticketSeatnum[tokenId];
+    }
+
     function mintTicketToken(address owner, string memory metadataURI, string memory concertId, uint256 seatnum, uint256 price)
         public
         returns(uint256)
@@ -95,6 +110,7 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         _setTokenURI(id, metadataURI);
         _setTicketIdOfConcertSeatnum(concertId, seatnum, id);
         _setTicketPrices(id, price);
+        _setTicketSeatnum(id, seatnum);
 
         emit info("In sol : success minting!", owner, id, metadataURI, seatnum, price); 
 
