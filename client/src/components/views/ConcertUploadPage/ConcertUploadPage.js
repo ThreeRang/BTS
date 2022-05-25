@@ -26,6 +26,7 @@ function ConcertUploadPage(props) {
   const [reservationCloseTime, setReservationCloseTime] = useState(new Date().getTime());
   const [concertDate, setConcertDate] = useState(new Date());
   const [concertTime, setConcertTime] = useState(new Date().getTime());
+  const [ticketPrice, setTicketPrice] = useState(0);
 
   const [concertImagePath, setconcertImagePath] = useState('');
   const [seatImagePath, setSeatImagePath] = useState('');
@@ -121,6 +122,9 @@ function ConcertUploadPage(props) {
     setNumOfSeat(e.currentTarget.value);
   };
 
+  const onTicketPriceChange = (e) => {
+    setTicketPrice(e.currentTarget.value);
+  };
   /*
     예약 오픈 마감 일정 
   */
@@ -352,9 +356,18 @@ function ConcertUploadPage(props) {
           <TextArea onChange={onConcertAddressChange} value={concertAddress} required />
           <br />
           <br />
-          <label>Seat Number </label>
-          <br />
-          <input type="number" onChange={onNumOfSeatChange} value={numOfSeat} required />
+          <div style={{ display: 'flex' }}>
+            <div>
+              <label>Seat Number </label>
+              <br />
+              <input type="number" onChange={onNumOfSeatChange} value={numOfSeat} required />
+            </div>
+            <div>
+              <label>Ticket Price</label>
+              <br />
+              <input type="number" onChange={onTicketPriceChange} value={ticketPrice} />
+            </div>
+          </div>
           <br />
           <br />
           <div style={{ display: 'flex' }}>
