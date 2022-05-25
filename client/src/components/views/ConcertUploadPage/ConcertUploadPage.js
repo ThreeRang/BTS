@@ -37,6 +37,7 @@ function ConcertUploadPage(props) {
 
   const [metadataURI, setMetadataURI] = useState('');
   const [smartContractAddress, setSmartContractAddress] = useState('');
+  const [concertId, setConcertId] = useState('');
 
   /*for ipfs '/ip4/127.0.0.1/tcp/5001'*/
   // const ipfs = create({
@@ -57,7 +58,6 @@ function ConcertUploadPage(props) {
     const mintABI = MintTicketTokenJSON.abi;
     //abi와 smartcontractaddress필요
     const mintContract = new web3.eth.Contract(mintABI, smartContractAddress);
-    setMetadataURI('QmNU5x7PGrJ4fimGWfgzamXL2fq7ZLiZ5qqkkg8L1aqTFk');
 
     console.log('do smartcontract');
     console.log(account);
@@ -73,7 +73,9 @@ function ConcertUploadPage(props) {
         to: smartContractAddress,
         nonce: nonce,
         gas: 500000,
-        data: mintContract.methods.mintTicketToken(account, metadataURI, concertTitle, i, 10).encodeABI(),
+        data: mintContract.methods
+          .mintTicketToken(account, metadataURI, concertTitle + account, i, ticketPrice)
+          .encodeABI(),
       };
       //tx작성, tx와 private key필요
       const signedTx = await web3.eth.accounts.signTransaction(
@@ -202,9 +204,9 @@ function ConcertUploadPage(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-
+    setConcertId(concertTitle + account);
     const variables = {
-      _id: concertTitle + Date.now(),
+      _id: concertTitle + account,
       concertInfo: {
         _id: account,
         concertTitle: concertTitle,
@@ -270,6 +272,7 @@ function ConcertUploadPage(props) {
     });
     /*connect smartcontract */
     setSmartContractAddress('0xcF9DC453417B9A1859B5adD8390a080b59926EDe');
+    setMetadataURI('QmNU5x7PGrJ4fimGWfgzamXL2fq7ZLiZ5qqkkg8L1aqTFk');
   }, [account, navigate]);
   return (
     <div className={uploadStyle.wrapper}>
