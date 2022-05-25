@@ -11,9 +11,11 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     //공연좌석에 따른 티켓Id
-    mapping(string => mapping(uint256 => uint256)) private ticketIdOfConcertSeatnum;
+    mapping(string => mapping(uint256 => uint256)) private _ticketIdOfConcertSeatnum;
+    //티켓Id에 따른 가격
+    mapping(uint256 => uint256) private _ticketPrices;
     //event정의
-    event info(string name, address own, uint256 id, string URI); 
+    event info(string name, address own, uint256 id, string URI, uint256 seatNum, uint256 price); 
 
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
@@ -53,23 +55,36 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         //_setBaseURI("https://ipfs.io/ipfs/");
     }
 
-    function setTicketIdOfConcertSeatnum(string memory concertId, uint256 seetnum, uint256 tokenId) 
+    function _setTicketIdOfConcertSeatnum(string memory concertId, uint256 seatnum, uint256 tokenId) 
         internal
         virtual
     {
         require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
-        ticketIdOfConcertSeatnum[concertId][seetnum] = tokenId;
+        _ticketIdOfConcertSeatnum[concertId][seatnum] = tokenId;
     }
 
-    function _ticketIdOfConcertSeatnum(string memory concertId, uint256 seetnum) 
+    function _setTicketPrices(uint256 tokenId, uint256 price) internal virtual{
+        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+        _ticketPrices[tokenId] = price;
+    }
+
+    function ticketIdOfConcertSeatnum(string memory concertId, uint256 seetnum) 
         public 
         view 
         returns(uint256)
     {
-        return ticketIdOfConcertSeatnum[concertId][seetnum];
+        return _ticketIdOfConcertSeatnum[concertId][seetnum];
     }
 
-    function mintTicketToken(address owner, string memory metadataURI, string memory concertId, uint256 seetnum)
+    function ticketPrices(uint256 tokenId) 
+        public 
+        view 
+        returns(uint256)
+    {
+        return _ticketPrices[tokenId];
+    }
+
+    function mintTicketToken(address owner, string memory metadataURI, string memory concertId, uint256 seatnum, uint256 price)
         public
         returns(uint256)
     {
@@ -78,9 +93,10 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         uint256 id = _tokenIds.current();
         _safeMint(owner, id);
         _setTokenURI(id, metadataURI);
-        setTicketIdOfConcertSeatnum(concertId, seetnum, id);
+        _setTicketIdOfConcertSeatnum(concertId, seatnum, id);
+        _setTicketPrices(id, price);
 
-        emit info("In sol : success minting!", owner, id, metadataURI); 
+        emit info("In sol : success minting!", owner, id, metadataURI, seatnum, price); 
 
         return id;
     }
