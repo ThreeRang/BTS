@@ -61,24 +61,28 @@ function ConcertUploadPage(props) {
     console.log('do smartcontract');
     console.log(account);
     //smartContractAddress 세팅
-    const nonce = await web3.eth.getTransactionCount(account, 'latest');
+
     //tx세팅
     //from, to, nonce, gas, data가 ''로 감싸져야하는데 안감싸지는 이슈가 있음
-    const tx = {
-      from: account,
-      to: smartContractAddress,
-      nonce: nonce,
-      gas: 500000,
-      data: mintContract.methods.mintTicketToken(account, metadataURI).encodeABI(),
-    };
-    //tx작성, tx와 private key필요
-    const signedTx = await web3.eth.accounts.signTransaction(
-      tx,
-      '0e795200c6137b244dcbf5fb5e598676b1e71c76447a4369c50183470567d1b2'
-    );
-    //영수증 발행
-    const transactionReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-    console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+
+    for (var i = 1; i <= numOfSeat; i++) {
+      const nonce = await web3.eth.getTransactionCount(account, 'latest');
+      const tx = {
+        from: account,
+        to: smartContractAddress,
+        nonce: nonce,
+        gas: 500000,
+        data: mintContract.methods.mintTicketToken(account, metadataURI, concertTitle, i, 10).encodeABI(),
+      };
+      //tx작성, tx와 private key필요
+      const signedTx = await web3.eth.accounts.signTransaction(
+        tx,
+        '0e795200c6137b244dcbf5fb5e598676b1e71c76447a4369c50183470567d1b2'
+      );
+      //영수증 발행
+      const transactionReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+      console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+    }
 
     // mintContract.methods
     //   .mintTicketToken(account, metadataURI)
@@ -261,7 +265,7 @@ function ConcertUploadPage(props) {
       }
     });
     /*connect smartcontract */
-    setSmartContractAddress('0x0d8Db18d54e7B4D0f75BCAb948815a4b15bABB01');
+    setSmartContractAddress('0xcF9DC453417B9A1859B5adD8390a080b59926EDe');
   }, [account, navigate]);
   return (
     <div className={uploadStyle.wrapper}>
