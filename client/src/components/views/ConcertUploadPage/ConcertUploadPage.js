@@ -61,11 +61,12 @@ function ConcertUploadPage(props) {
     console.log('do smartcontract');
     console.log(account);
     //smartContractAddress 세팅
-    const nonce = await web3.eth.getTransactionCount(account, 'latest');
+
     //tx세팅
     //from, to, nonce, gas, data가 ''로 감싸져야하는데 안감싸지는 이슈가 있음
 
     for (var i = 1; i <= numOfSeat; i++) {
+      const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
         from: account,
         to: smartContractAddress,
