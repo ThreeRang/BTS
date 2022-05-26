@@ -173,7 +173,7 @@ router.post("/uploadConcert", (req, res) => {
   const concert = new Concert(req.body);
   concert.save((err, doc) => {
     if (err) return res.status(400).json({ success: false, err });
-    return res.status(200).json({ success: true });
+    return res.status(200).json({ success: true, concert });
   });
 });
 module.exports = router;
