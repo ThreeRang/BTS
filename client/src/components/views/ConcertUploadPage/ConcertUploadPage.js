@@ -161,7 +161,7 @@ function ConcertUploadPage(props) {
   const onSubmit = (e) => {
     e.preventDefault();
     const variables = {
-      _id: concertTitle + Date.now(),
+      _id: concertTitle + account,
       concertInfo: {
         _id: account,
         concertTitle: concertTitle,
