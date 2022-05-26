@@ -1,20 +1,19 @@
 import Meta from 'antd-v3/lib/card/Meta';
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
-import { Col, Typography, Row, Input, Select } from 'antd-v3';
-import Avatar from 'react-avatar';
-import { useParams } from 'react-router-dom';
+import { Col } from 'antd-v3';
 import { mintContract } from '../../../../web3Config';
-
+import ticketStyle from './ConcertItemsTab.module.css';
 const TicketCard = ({ concertData }) => {
   return (
-    <>
-      {console.log(concertData)}
-      <Col lg={6} md={8} xs={24}>
-        <div>
-          <div>
-            <img style={{ width: '100%' }} src={`http://localhost:5000/${concertData.img}`} alt="ticketImage" />
-          </div>
+    <div style={{ width: '85%', margin: 'auto auto' }}>
+      <Col className={ticketStyle.wrapper} lg={6} md={8} xs={24}>
+        <div className={ticketStyle.ticketImage}>
+          <a href={`/concert/detail/${concertData.concertId}/ticket/${concertData.id}`}>
+            <div>
+              <img style={{ width: '100%' }} src={`http://localhost:5000/${concertData.img}`} alt="ticketImage" />
+            </div>
+          </a>
           <br />
           <Meta style={{ marginLeft: '1rem' }} title={concertData.title} />
           <br />
@@ -34,7 +33,7 @@ const TicketCard = ({ concertData }) => {
           />
         </div>
       </Col>
-    </>
+    </div>
   );
 };
 
@@ -55,6 +54,7 @@ const ConcertItemsTab = ({ concertId }) => {
 
         const ticketData = {
           id: ticketId,
+          concertId: concertId,
           title: concertTitle,
           date: concertDate,
           reservationClose: reservationClose,

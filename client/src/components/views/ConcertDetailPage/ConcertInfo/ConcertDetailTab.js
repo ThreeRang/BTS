@@ -10,7 +10,6 @@ const ConcertDetailTab = ({ concertId }) => {
   const [concertTitle, setConcertTitle] = useState('');
   const [description, setDescription] = useState('');
   const [concertDate, setConcertDate] = useState('');
-  const [numOfSeat, setNumOfSeat] = useState(0);
   const [concertAddress, setConcertAddress] = useState('');
   const [reservationOpen, setReservationOpen] = useState('');
   const [reservationClose, setReservationClose] = useState('');
@@ -34,7 +33,6 @@ const ConcertDetailTab = ({ concertId }) => {
         setConcertDate(
           response.data.concert.concertInfo.concertDate.date + '/' + response.data.concert.concertInfo.concertDate.time
         );
-        setNumOfSeat(response.data.concert.concertInfo.numOfSeat);
         setConcertAddress(response.data.concert.concertInfo.concertAddress);
         setReservationOpen(
           response.data.concert.concertInfo.reservation.open.date +

@@ -22,7 +22,7 @@ const App = () => {
           <Route path={'/users/Profile/:userAccount'} element={<Profile />}></Route>
           <Route path={'/users/Profile/Update/:userAccount'} element={<ProfileUpdate />}></Route>
           <Route path={'/concert/detail/:concertId'} element={<ConcertDetailPage />}></Route>
-          <Route path={'/concert/Ticket'} element={<TicketPage />}></Route>
+          <Route path={'/concert/detail/:concertId/ticket/:ticketId'} element={<TicketPage />}></Route>
           <Route path={'/concert/detail/:concertId/update'} element={<ConcertDetailUpload />}></Route>
         </Routes>
       </div>
