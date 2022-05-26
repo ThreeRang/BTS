@@ -4,6 +4,8 @@ import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import uploadStyle from './ConcertUploadPage.module.css';
+import { mintContract, web3 } from '../../../web3Config';
+import { privateKey, smartContractAddress } from '../../../smartContractConfig';
 // import MintTicketTokenJSON from './MintTicketToken.json';
 // import MintTicketToken from '../../../abi/MintTicketToken.json';
 // import { create } from 'ipfs-http-client';
@@ -33,11 +35,7 @@ function ConcertUploadPage(props) {
   const [ticketImagePath, setTicketImagePath] = useState('');
   const [userImagePath, setUserImagePath] = useState('');
 
-  /*conect smart contract*/
-
   const [metadataURI, setMetadataURI] = useState('');
-  const [smartContractAddress, setSmartContractAddress] = useState('');
-  const [concertId, setConcertId] = useState('');
 
   /*for ipfs '/ip4/127.0.0.1/tcp/5001'*/
   // const ipfs = create({
@@ -47,25 +45,7 @@ function ConcertUploadPage(props) {
   // });
   // const [files, setFiles] = useState({});
 
-  const onSubmitNft = async () => {
-    //ipfs에 이미지 업로드하고 hash값 리턴 == metadataURI
-
-    //minting
-    //metadataURI 세팅
-    const Web3 = require('web3');
-    const web3 = new Web3(window.ethereum);
-    const MintTicketTokenJSON = require('./MintTicketToken.json');
-    const mintABI = MintTicketTokenJSON.abi;
-    //abi와 smartcontractaddress필요
-    const mintContract = new web3.eth.Contract(mintABI, smartContractAddress);
-
-    console.log('do smartcontract');
-    console.log(account);
-    //smartContractAddress 세팅
-
-    //tx세팅
-    //from, to, nonce, gas, data가 ''로 감싸져야하는데 안감싸지는 이슈가 있음
-
+  const onSubmitNft = async (concert) => {
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
@@ -73,38 +53,14 @@ function ConcertUploadPage(props) {
         to: smartContractAddress,
         nonce: nonce,
         gas: 500000,
-        data: mintContract.methods
-          .mintTicketToken(account, metadataURI, concertTitle + account, i, ticketPrice)
-          .encodeABI(),
+        data: mintContract.methods.mintTicketToken(account, metadataURI, concert._id, i, ticketPrice).encodeABI(),
       };
       //tx작성, tx와 private key필요
-      const signedTx = await web3.eth.accounts.signTransaction(
-        tx,
-        '0e795200c6137b244dcbf5fb5e598676b1e71c76447a4369c50183470567d1b2'
-      );
+      const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
       //영수증 발행
       const transactionReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
     }
-
-    // mintContract.methods
-    //   .mintTicketToken(account, metadataURI)
-    //   .call({ from: '0x0d8Db18d54e7B4D0f75BCAb948815a4b15bABB01' })
-    //   .then((result) => {
-    //     console.log(result);
-    //   });
-
-    console.log('finish mint contract!');
-
-    // .send({ from: '0x0d8Db18d54e7B4D0f75BCAb948815a4b15bABB01' }, (err, result) => {
-    //   if (!err) {
-    //     console.log('Transaction successfully sended');
-    //     console.log('hash: ', result);
-    //   } else {
-    //     console.err(err);
-    //   }
-    // });
-    // await instance.mintTicketToken(account, metadataURI);
   };
 
   /*-------------------onChange----------------------*/
@@ -204,9 +160,8 @@ function ConcertUploadPage(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    setConcertId(concertTitle + account);
     const variables = {
-      _id: concertTitle + account,
+      _id: concertTitle + Date.now(),
       concertInfo: {
         _id: account,
         concertTitle: concertTitle,
@@ -235,20 +190,19 @@ function ConcertUploadPage(props) {
         userImage: userImagePath,
       },
     };
-    Axios.post('http://localhost:5000/api/upload/uploadConcert', variables)
-      .then((response) => {
-        if (response.data.success) {
+    Axios.post('http://localhost:5000/api/upload/uploadConcert', variables).then((response) => {
+      if (response.data.success) {
+        message.success('업로드 중입니다...');
+        onSubmitNft(response.data.concert).then(() => {
           message.success('성공적으로 업로드 하였습니다.');
           setTimeout(() => {
             navigate('/');
           }, 3000);
-        } else {
-          alert('콘서트 업로드에 실패 하였습니다.');
-        }
-      })
-      .then(() => {
-        onSubmitNft();
-      });
+        });
+      } else {
+        alert('콘서트 업로드에 실패 하였습니다.');
+      }
+    });
   };
 
   useEffect(() => {
@@ -270,9 +224,6 @@ function ConcertUploadPage(props) {
         });
       }
     });
-    /*connect smartcontract */
-    setSmartContractAddress('0xcF9DC453417B9A1859B5adD8390a080b59926EDe');
-    setMetadataURI('QmNU5x7PGrJ4fimGWfgzamXL2fq7ZLiZ5qqkkg8L1aqTFk');
   }, [account, navigate]);
   return (
     <div className={uploadStyle.wrapper}>

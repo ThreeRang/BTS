@@ -71,7 +71,8 @@ const ConcertItemsTab = ({ concertId }) => {
   };
 
   useEffect(() => {
-    getConcertTickets();
+    if (numOfSeat !== 0 && concertTitle !== '' && concertDate !== '' && reservationClose !== '' && ticketImg !== '')
+      getConcertTickets();
   }, [numOfSeat, concertTitle, concertDate, reservationClose, ticketImg]);
 
   useEffect(() => {
@@ -88,14 +89,11 @@ const ConcertItemsTab = ({ concertId }) => {
             response.data.concert.concertInfo.reservation.close.time
         );
         setTicketImg(response.data.concert.image.ticketImage);
-        console.log('set sale tickets');
       } else {
         alert('콘서트 가져오기를 실패 했습니다.');
       }
     });
   }, [concertId]);
-
-  console.log(onSaleTickets);
 
   const listData = onSaleTickets.map((oneTicket, index) => (
     <TicketCard key={index} concertData={oneTicket}></TicketCard>
