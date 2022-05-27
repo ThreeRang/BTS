@@ -1,5 +1,9 @@
 const MintTicketToken = artifacts.require("MintTicketToken");
+const PurchaseTicketToken = artifacts.require("PurchaseTicketToken");
 
 module.exports = function (deployer) {
-  deployer.deploy(MintTicketToken);
+  deployer.then(async () => {
+    await deployer.deploy(MintTicketToken);
+    await deployer.deploy(PurchaseTicketToken, MintTicketToken.address);
+  });
 };

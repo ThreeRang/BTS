@@ -23,5 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 client/src/MintTicketToken.json
-
+client/src/PurchaseTicketToken.json
 truffle/build/contracts/
