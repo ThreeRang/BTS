@@ -2,7 +2,7 @@ import Meta from 'antd-v3/lib/card/Meta';
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Col } from 'antd-v3';
-import { mintContract } from '../../../../web3Config';
+import { mintContract, web3 } from '../../../../web3Config';
 import ticketStyle from './ConcertItemsTab.module.css';
 const TicketCard = ({ concertData }) => {
   return (
@@ -24,7 +24,7 @@ const TicketCard = ({ concertData }) => {
           />
           <Meta
             style={{ marginLeft: '1rem', fontSize: '12px' }}
-            description={`Ticket prices : ${concertData.price} `}
+            description={`Ticket prices : ${web3.utils.fromWei(concertData.price, 'wei')} `}
           />
           <hr />
           <Meta
@@ -44,6 +44,7 @@ const ConcertItemsTab = ({ concertId }) => {
   const [concertDate, setConcertDate] = useState('');
   const [reservationClose, setReservationClose] = useState('');
   const [ticketImg, setTicketImg] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const getConcertTickets = async () => {
     try {
@@ -65,6 +66,7 @@ const ConcertItemsTab = ({ concertId }) => {
         tickets.push(ticketData);
       }
       setOnSaleTickets(tickets);
+      setLoading(false);
     } catch (error) {
       console.error(error);
     }
@@ -98,7 +100,7 @@ const ConcertItemsTab = ({ concertId }) => {
   const listData = onSaleTickets.map((oneTicket, index) => (
     <TicketCard key={index} concertData={oneTicket}></TicketCard>
   ));
-  return <div>{listData}</div>;
+  return <div>{loading ? <h1>Loading...</h1> : listData}</div>;
 };
 
 export default ConcertItemsTab;
