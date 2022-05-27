@@ -1,15 +1,84 @@
 import { Button, Typography, Card } from 'antd-v3';
-import React from 'react';
+import Axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { web3, mintContract, purchaseContract } from '../../../web3Config';
+import { purchaseContractAddress } from '../../../smartContractConfig';
+/* import ticketPageStyle from './TicketPage.module.css'; */
 
-import ticketPageStyle from './TicketPage.module.css';
-
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const TicketPage = () => {
   // const account = useParams().ticketAddress;
   // const [title, setTitle] = useState('');
   // const [ipfsHash, setIpfsHash] = useState('');
   // const [price, setPrice] = useState(0);
   // const [seatNum, setSeatNum] = useState('');
+
+  const { concertId, ticketId } = useParams();
+  const [concertTitle, setConcertTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [concertDate, setConcertDate] = useState('');
+  const [concertAddress, setConcertAddress] = useState('');
+  const [reservationDate, setReservationDate] = useState('');
+  const [writerAccount, setWriterAccount] = useState('');
+  const [ticketImage, setTicketImage] = useState('');
+  const [ticketPrice, setTicketPrice] = useState(0);
+  const [seatNum, setSeatNum] = useState(0);
+  const [account, setAccount] = useState('');
+
+  const onPurchaseTicket = async () => {
+    try {
+      if (!account) return;
+      const response = await purchaseContract.methods
+        .purchaseTicketToken(ticketId)
+        .send({ from: account[0], value: ticketPrice });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(async () => {
+    const price = await mintContract.methods.ticketPrices(ticketId).call();
+    const seat = await mintContract.methods.ticketSeatnum(ticketId).call();
+    setTicketPrice(web3.utils.fromWei(price, 'wei'));
+    setSeatNum(seat);
+    window.ethereum.request({ method: 'eth_requestAccounts' }).then((result) => {
+      setAccount(result);
+    });
+  }, [ticketPrice, seatNum]);
+  const oncheck = async () => {
+    console.log(account);
+    const owner = await mintContract.methods.ownerOf(ticketId).call();
+    const approvalNow = await mintContract.methods.isApprovedForAll(account[0], purchaseContractAddress).call();
+    console.log(owner);
+    console.log(approvalNow);
+  };
+  useEffect(() => {
+    Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
+      if (response.data.success) {
+        setTicketImage(response.data.concert.image.ticketImage);
+        setWriterAccount(response.data.concert.concertInfo._id);
+        setConcertTitle(response.data.concert.concertInfo.concertTitle);
+
+        setDescription(response.data.concert.concertInfo.description);
+        setConcertDate(
+          response.data.concert.concertInfo.concertDate.date + '/' + response.data.concert.concertInfo.concertDate.time
+        );
+        setConcertAddress(response.data.concert.concertInfo.concertAddress);
+        setReservationDate(
+          response.data.concert.concertInfo.reservation.open.date +
+            '/' +
+            response.data.concert.concertInfo.reservation.open.time +
+            '~' +
+            response.data.concert.concertInfo.reservation.close.date +
+            '/' +
+            response.data.concert.concertInfo.reservation.close.time
+        );
+      } else {
+        alert('티켓 정보를 읽는데 실패하였습니다.');
+      }
+    });
+  }, [concertId]);
 
   return (
     <div style={{ width: '60%', margin: 'auto auto' }}>
@@ -21,23 +90,43 @@ const TicketPage = () => {
           }}
         >
           <div style={{ width: '300', height: '240', marginRight: '20px' }}>
-            <img src={'http://localhost:5000/image/ticketImage/_resize_1653192259623_714847_426867_3336.jpeg'} />
+            <img src={`http://localhost:5000/${ticketImage}`} alt="ticketImage" />
             <br />
           </div>
           <div>
-            <Text italic>Owned by 누구누구</Text>
-
-            <Card title="reservation date" size="small">
-              <p>Current Price</p>
-              <p>Price</p>
-              <Button>Buy now</Button>
+            <Card title={`Title : ${concertTitle}`} size="small">
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(writerAccount);
+                  alert('주소 복사 완료!');
+                }}
+              >
+                🏷: {writerAccount}
+              </Button>
+              <br />
+              <Text>{`⏱ : ${reservationDate}`}</Text>
+              <br />
+              <Text>{`🗓 : ${concertDate}`}</Text>
+              <br />
+              <Text>{`🏁 : ${concertAddress}`}</Text>
+              <br />
+              <br />
+            </Card>
+            <Card title={`Ticket id : ${ticketId}`} size="small">
+              <Text>{`🪑 : ${seatNum}`}</Text>
+              <br />
+              <Text>{`💰 : ${ticketPrice}`}</Text>
+              <br />
+              {/*  <p>{ticketPrice}</p> */}
+              <Button onClick={onPurchaseTicket}>Buy now</Button>
+              <Button onClick={oncheck}>check</Button>
+              <br />
             </Card>
           </div>
         </div>
-        <Card title="descripsion" size="small">
-          <p>Concert title</p>
-          <p>Concert description</p>
-        </Card>
+      </Card>
+      <Card title="📝Description">
+        <Text>{description}</Text>
       </Card>
     </div>
   );

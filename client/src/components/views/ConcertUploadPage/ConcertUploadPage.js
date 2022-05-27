@@ -4,8 +4,8 @@ import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import uploadStyle from './ConcertUploadPage.module.css';
-import { mintContract, web3 } from '../../../web3Config';
-import { privateKey, smartContractAddress } from '../../../smartContractConfig';
+import { mintContract, purchaseContract, web3 } from '../../../web3Config';
+import { privateKey, mintContractAddress, purchaseContractAddress } from '../../../smartContractConfig';
 // import MintTicketTokenJSON from './MintTicketToken.json';
 // import MintTicketToken from '../../../abi/MintTicketToken.json';
 // import { create } from 'ipfs-http-client';
@@ -46,11 +46,12 @@ function ConcertUploadPage(props) {
   // const [files, setFiles] = useState({});
 
   const onSubmitNft = async (concert) => {
+    var tokensId = [];
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
         from: account,
-        to: smartContractAddress,
+        to: mintContractAddress,
         nonce: nonce,
         gas: 500000,
         data: mintContract.methods.mintTicketToken(account, metadataURI, concert._id, i, ticketPrice).encodeABI(),
@@ -60,6 +61,20 @@ function ConcertUploadPage(props) {
       //영수증 발행
       const transactionReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+      const tokenId = await mintContract.methods.ticketIdOfConcertSeatnum(concert._id, i).call();
+      const setApproval = await mintContract.methods
+        .setApprovalForAll(purchaseContractAddress, true)
+        .send({ from: account });
+      tokensId.push({ tokenId: tokenId, price: ticketPrice });
+    }
+    return tokensId;
+  };
+
+  const onSetSale = async (tokensId) => {
+    for (var token of tokensId) {
+      const setSeat = await purchaseContract.methods
+        .setForSaleTicketToken(token.tokenId, web3.utils.toWei(token.price, 'wei'))
+        .send({ from: account });
     }
   };
 
@@ -161,7 +176,7 @@ function ConcertUploadPage(props) {
   const onSubmit = (e) => {
     e.preventDefault();
     const variables = {
-      _id: concertTitle + account,
+      _id: concertTitle + Date.now(),
       concertInfo: {
         _id: account,
         concertTitle: concertTitle,
@@ -193,11 +208,13 @@ function ConcertUploadPage(props) {
     Axios.post('http://localhost:5000/api/upload/uploadConcert', variables).then((response) => {
       if (response.data.success) {
         message.success('업로드 중입니다...');
-        onSubmitNft(response.data.concert).then(() => {
-          message.success('성공적으로 업로드 하였습니다.');
-          setTimeout(() => {
-            navigate('/');
-          }, 3000);
+        onSubmitNft(response.data.concert).then((resurt) => {
+          onSetSale(resurt).then(() => {
+            message.success('성공적으로 업로드 하였습니다.');
+            setTimeout(() => {
+              navigate('/');
+            }, 3000);
+          });
         });
       } else {
         alert('콘서트 업로드에 실패 하였습니다.');

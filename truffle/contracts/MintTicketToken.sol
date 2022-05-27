@@ -106,6 +106,7 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         _tokenIds.increment();
         
         uint256 id = _tokenIds.current();
+
         _safeMint(owner, id);
         _setTokenURI(id, metadataURI);
         _setTicketIdOfConcertSeatnum(concertId, seatnum, id);
