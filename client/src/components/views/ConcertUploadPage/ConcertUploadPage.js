@@ -44,6 +44,10 @@ function ConcertUploadPage(props) {
   //   protocol: 'https',
   // });
   // const [files, setFiles] = useState({});
+  const onSetting = async () => {
+    const setOne = await mintContract.methods.setPurchaseTicketToken(purchaseContractAddress).send({ from: account });
+    const setTwo = await mintContract.methods.setApprovalForAll(purchaseContractAddress, true).send({ from: account });
+  };
 
   const onSubmitNft = async (concert) => {
     var tokensId = [];
@@ -62,21 +66,19 @@ function ConcertUploadPage(props) {
       const transactionReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
       const tokenId = await mintContract.methods.ticketIdOfConcertSeatnum(concert._id, i).call();
-      const setApproval = await mintContract.methods
-        .setApprovalForAll(purchaseContractAddress, true)
-        .send({ from: account });
+
       tokensId.push({ tokenId: tokenId, price: ticketPrice });
     }
     return tokensId;
   };
 
-  const onSetSale = async (tokensId) => {
-    for (var token of tokensId) {
-      const setSeat = await purchaseContract.methods
-        .setForSaleTicketToken(token.tokenId, web3.utils.toWei(token.price, 'wei'))
-        .send({ from: account });
-    }
-  };
+  // const onSetSale = async (tokensId) => {
+  //   for (var token of tokensId) {
+  //     const setSeat = await purchaseContract.methods
+  //       .setForSaleTicketToken(token.tokenId, web3.utils.toWei(token.price, 'wei'))
+  //       .send({ from: account });
+  //   }
+  // };
 
   /*-------------------onChange----------------------*/
   const onTitleChange = (e) => {
@@ -208,13 +210,15 @@ function ConcertUploadPage(props) {
     Axios.post('http://localhost:5000/api/upload/uploadConcert', variables).then((response) => {
       if (response.data.success) {
         message.success('업로드 중입니다...');
-        onSubmitNft(response.data.concert).then((resurt) => {
-          onSetSale(resurt).then(() => {
+        onSetting().then(() => {
+          onSubmitNft(response.data.concert).then((resurt) => {
             message.success('성공적으로 업로드 하였습니다.');
             setTimeout(() => {
               navigate('/');
             }, 3000);
           });
+          // onSetSale(resurt).then(() => {
+          // });
         });
       } else {
         alert('콘서트 업로드에 실패 하였습니다.');
