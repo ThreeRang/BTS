@@ -8,12 +8,6 @@ import { purchaseContractAddress } from '../../../smartContractConfig';
 
 const { Text } = Typography;
 const TicketPage = () => {
-  // const account = useParams().ticketAddress;
-  // const [title, setTitle] = useState('');
-  // const [ipfsHash, setIpfsHash] = useState('');
-  // const [price, setPrice] = useState(0);
-  // const [seatNum, setSeatNum] = useState('');
-
   const { concertId, ticketId } = useParams();
   const [concertTitle, setConcertTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -47,11 +41,15 @@ const TicketPage = () => {
     });
   }, [ticketPrice, seatNum]);
   const oncheck = async () => {
-    console.log(account);
-    const owner = await mintContract.methods.ownerOf(ticketId).call();
-    const approvalNow = await mintContract.methods.isApprovedForAll(account[0], purchaseContractAddress).call();
-    console.log(owner);
-    console.log(approvalNow);
+    try {
+      console.log(account);
+      const owner = await mintContract.methods.ownerOf(ticketId).call();
+      const approvalNow = await mintContract.methods.isApprovedForAll(account[0], purchaseContractAddress).call();
+      console.log(owner);
+      console.log(approvalNow);
+    } catch (error) {
+      console.error(error);
+    }
   };
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {

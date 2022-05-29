@@ -6,8 +6,11 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./PurchaseTicketToken.sol";
 //https://docs.openzeppelin.com/contracts/4.x/api/utils#Counters
 contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
+    PurchaseTicketToken public purchaseTicketToken;
+
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     //공연좌석에 따른 티켓Id
@@ -112,9 +115,14 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         _setTicketIdOfConcertSeatnum(concertId, seatnum, id);
         _setTicketPrices(id, price);
         _setTicketSeatnum(id, seatnum);
-
+        purchaseTicketToken.setForSaleTicketToken(id, price);
+        
         emit info("In sol : success minting!", owner, id, metadataURI, seatnum, price); 
 
         return id;
+    }
+
+    function setPurchaseTicketToken(address _purchaseTicketToken) public{
+        purchaseTicketToken = PurchaseTicketToken(_purchaseTicketToken);
     }
 }
