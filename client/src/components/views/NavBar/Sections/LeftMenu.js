@@ -21,9 +21,8 @@ function LeftMenu(props) {
           <Menu.Item key="setting:4">Option 4</Menu.Item>
         </MenuItemGroup>
       </SubMenu> */}
-      
     </Menu>
-  )
+  );
 }
 
-export default LeftMenu
+export default LeftMenu;
