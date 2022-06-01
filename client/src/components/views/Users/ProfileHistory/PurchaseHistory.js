@@ -6,7 +6,8 @@ import { mintContract } from '../../../../web3Config';
 import Axios from 'axios';
 
 const PurchaseHistory = ({ account }) => {
-  const [tickets, setTickets] = useState([]);
+  const [usedTickets, setUsedTickets] = useState([]);
+  const [unUsedTickets, setUnUsedTickets] = useState([]);
   const [balances, setBalances] = useState(0);
 
   const onUseTicket = async (ticketId) => {
@@ -26,7 +27,8 @@ const PurchaseHistory = ({ account }) => {
 
   const getTokenIds = async (count) => {
     try {
-      var ticketList = [];
+      var usedTicketList = [];
+      var notUsedTicketList = [];
       for (let i = 0; i < count; i++) {
         const ticketId = await mintContract.methods.tokenOfOwnerByIndex(account, i).call();
         const concertId = await mintContract.methods.ticketConcert(ticketId).call();
@@ -52,14 +54,18 @@ const PurchaseHistory = ({ account }) => {
                 price: ticketPrice,
                 used: ticketUsed,
               };
-              ticketList.push(purchaseTicketData);
+              if (ticketUsed) {
+                usedTicketList.push(purchaseTicketData);
+              } else {
+                notUsedTicketList.push(purchaseTicketData);
+              }
             } else {
               alert('콘서트 가져오기를 실패 했습니다.');
             }
           }
         );
       }
-      return ticketList;
+      return [usedTicketList, notUsedTicketList];
     } catch (error) {
       console.error(error);
     }
@@ -67,13 +73,36 @@ const PurchaseHistory = ({ account }) => {
 
   useEffect(() => {
     getBalances().then((resurt) => {
-      getTokenIds(resurt).then((ticketList) => {
-        setTickets(ticketList);
+      getTokenIds(resurt).then((ticketLists) => {
+        setUsedTickets(ticketLists[0]);
+        setUnUsedTickets(ticketLists[1]);
       });
     });
   }, [account]);
 
-  const renderCards = tickets.map((ticket, index) => {
+  const renderUseCards = usedTickets.map((ticket, index) => {
+    return (
+      <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
+        <div style={{ textAlign: 'left' }} className={concertStyle.concertImage}>
+          <div>
+            <img style={{ width: '100%' }} src={`http://localhost:5000/${ticket.img}`} alt="ticketImage" />
+          </div>
+          <br />
+          <Meta style={{ marginLeft: '1rem' }} title={ticket.title} />
+          <br />
+          <Meta style={{ marginLeft: '1rem', fontSize: '12px' }} description={`Date : ${ticket.date} `} />
+          <br />
+          <Meta style={{ marginLeft: '1rem', fontSize: '12px' }} description={`Seat Number : ${ticket.seatNumber}`} />
+          <br />
+          <Meta style={{ marginLeft: '1rem', fontSize: '12px' }} description={`Already Used : ${ticket.used}`} />
+          <hr />
+          <Button disabled="disabled">사용됨</Button>
+        </div>
+      </Col>
+    );
+  });
+
+  const renderNotUseCards = unUsedTickets.map((ticket, index) => {
     return (
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
         <div style={{ textAlign: 'left' }} className={concertStyle.concertImage}>
@@ -103,12 +132,17 @@ const PurchaseHistory = ({ account }) => {
 
   return (
     <div style={{ width: '85%', margin: '2rem auto' }}>
-      {tickets.length === 0 ? (
+      {usedTickets.length + unUsedTickets.length === 0 ? (
         <div>구매하신 티켓이 없습니다.</div>
       ) : (
         <div>
-          <div>총 {tickets.length}장</div>
-          <Row gutter={[32, 16]}>{renderCards}</Row>
+          <div>총 {usedTickets.length + unUsedTickets.length}장</div>
+          {(function () {
+            if (unUsedTickets.length !== 0) return <Row gutter={[32, 16]}>{renderNotUseCards}</Row>;
+          })()}
+          {(function () {
+            if (usedTickets.length !== 0) return <Row gutter={[32, 16]}>{renderUseCards}</Row>;
+          })()}
         </div>
       )}
     </div>
