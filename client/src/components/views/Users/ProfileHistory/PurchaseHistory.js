@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Row } from 'antd-v3';
 import concertStyle from '../../MainPage/MainPage.module.css';
 import Meta from 'antd-v3/lib/card/Meta';
-import { mintContract, web3 } from '../../../../web3Config';
+import { mintContract } from '../../../../web3Config';
 import Axios from 'axios';
 
 const PurchaseHistory = ({ account }) => {
   const [tickets, setTickets] = useState([]);
   const [balances, setBalances] = useState(0);
+
+  const onUseTicket = async (ticketId) => {
+    await mintContract.methods.useTicket(ticketId).send({ from: account });
+    const useCheck = await mintContract.methods.ticketUsed(ticketId).call();
+  };
 
   const getBalances = async () => {
     try {
@@ -84,7 +89,13 @@ const PurchaseHistory = ({ account }) => {
           <br />
           <Meta style={{ marginLeft: '1rem', fontSize: '12px' }} description={`Already Used : ${ticket.used}`} />
           <hr />
-          <Button /* onClick={} */>사용하기</Button>
+          <Button
+            onClick={() => {
+              onUseTicket(ticket.id);
+            }}
+          >
+            사용하기
+          </Button>
         </div>
       </Col>
     );
