@@ -38,26 +38,28 @@ const PurchaseHistory = ({ account }) => {
         await Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then(
           (response) => {
             if (response.data.success) {
-              const concertTitle = response.data.concert.concertInfo.concertTitle;
-              const concertDate =
-                response.data.concert.concertInfo.concertDate.date +
-                '/' +
-                response.data.concert.concertInfo.concertDate.time;
-              const ticketImg = response.data.concert.image.ticketImage;
-              const purchaseTicketData = {
-                id: ticketId,
-                concertId: concertId,
-                title: concertTitle,
-                date: concertDate,
-                img: ticketImg,
-                seatNumber: seatNum,
-                price: ticketPrice,
-                used: ticketUsed,
-              };
-              if (ticketUsed) {
-                usedTicketList.push(purchaseTicketData);
-              } else {
-                notUsedTicketList.push(purchaseTicketData);
+              if (response.data.concert.concertInfo._id !== account) {
+                const concertTitle = response.data.concert.concertInfo.concertTitle;
+                const concertDate =
+                  response.data.concert.concertInfo.concertDate.date +
+                  '/' +
+                  response.data.concert.concertInfo.concertDate.time;
+                const ticketImg = response.data.concert.image.ticketImage;
+                const purchaseTicketData = {
+                  id: ticketId,
+                  concertId: concertId,
+                  title: concertTitle,
+                  date: concertDate,
+                  img: ticketImg,
+                  seatNumber: seatNum,
+                  price: ticketPrice,
+                  used: ticketUsed,
+                };
+                if (ticketUsed) {
+                  usedTicketList.push(purchaseTicketData);
+                } else {
+                  notUsedTicketList.push(purchaseTicketData);
+                }
               }
             } else {
               alert('콘서트 가져오기를 실패 했습니다.');
