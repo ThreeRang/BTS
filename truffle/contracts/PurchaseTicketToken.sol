@@ -55,4 +55,13 @@ contract PurchaseTicketToken{
     function getOnSaleTicketTokenArrayLenth() view public returns (uint256){
         return onSaleTicketTokenArray.length;
     }
+    
+    function getInOnSaleTicketTokenArray(uint256 _tokenId) view public returns (bool){
+        for(uint256 i = 0; i < onSaleTicketTokenArray.length ; i++){
+            if(onSaleTicketTokenArray[i] == _tokenId){
+                return true;
+            }
+        }
+        return false;
+    }
 }

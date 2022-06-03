@@ -23,6 +23,9 @@ const TicketPage = () => {
   const onPurchaseTicket = async () => {
     try {
       if (!account) return;
+      if (writerAccount === account[0]) {
+        return alert('해당 공연의 등록자는 티켓을 구매할 수 없습니다.');
+      }
       const response = await purchaseContract.methods
         .purchaseTicketToken(ticketId)
         .send({ from: account[0], value: ticketPrice });
@@ -42,9 +45,10 @@ const TicketPage = () => {
   }, [ticketPrice, seatNum]);
   const oncheck = async () => {
     try {
-      console.log(account);
       const owner = await mintContract.methods.ownerOf(ticketId).call();
       const approvalNow = await mintContract.methods.isApprovedForAll(account[0], purchaseContractAddress).call();
+      console.log(account);
+      console.log(writerAccount);
       console.log(owner);
       console.log(approvalNow);
     } catch (error) {
