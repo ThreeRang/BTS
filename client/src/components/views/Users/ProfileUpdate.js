@@ -15,18 +15,10 @@ const ProfileUpdate = () => {
   const navigate = useNavigate();
 
   const onChangeName = (e) => {
-    if (!e.target.value) {
-      setUpdateName('none');
-    } else {
-      setUpdateName(e.target.value);
-    }
+    setUpdateName(e.target.value);
   };
   const onChangeEmail = (e) => {
-    if (!e.target.value) {
-      setUpdateEmail('none');
-    } else {
-      setUpdateEmail(e.target.value);
-    }
+    setUpdateEmail(e.target.value);
   };
 
   const onDropUserImage = (files) => {
@@ -48,23 +40,27 @@ const ProfileUpdate = () => {
   const onSubmit = (e) => {
     e.preventDefault();
 
-    const variables = {
-      _id: account,
-      name: updateName,
-      email: updateEmail,
-      image: userImagePath,
-    };
-    if (window.confirm('수정하시겠습니까?')) {
-      Axios.patch('http://localhost:5000/api/users/update', variables).then((response) => {
-        if (response.data.success) {
-          message.success('성공적으로 수정하였습니다.');
-        } else {
-          alert('수정에 실패 했습니다.');
-        }
-      });
-      setTimeout(() => {
-        navigate(`/users/Profile/${account}`);
-      }, 3000);
+    if (!updateName || !updateEmail) {
+      alert('이름 또는 이메일을 작성해주세요.');
+    } else {
+      const variables = {
+        _id: account,
+        name: updateName,
+        email: updateEmail,
+        image: userImagePath,
+      };
+      if (window.confirm('수정하시겠습니까?')) {
+        Axios.patch('http://localhost:5000/api/users/update', variables).then((response) => {
+          if (response.data.success) {
+            message.success('성공적으로 수정하였습니다.');
+          } else {
+            alert('수정에 실패 했습니다.');
+          }
+        });
+        setTimeout(() => {
+          navigate(`/users/Profile/${account}`);
+        }, 3000);
+      }
     }
   };
 
