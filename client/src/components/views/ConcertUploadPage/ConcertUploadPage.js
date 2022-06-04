@@ -22,12 +22,12 @@ function ConcertUploadPage(props) {
   const [description, setDescription] = useState('');
   const [concertAddress, setconcertAddress] = useState('');
   const [numOfSeat, setNumOfSeat] = useState(0);
-  const [reservationOpenDate, setReservationOpenDate] = useState(new Date());
-  const [reservationCloseDate, setReservationCloseDate] = useState(new Date());
-  const [reservationOpenTime, setReservationOpenTime] = useState(new Date().getTime());
-  const [reservationCloseTime, setReservationCloseTime] = useState(new Date().getTime());
-  const [concertDate, setConcertDate] = useState(new Date());
-  const [concertTime, setConcertTime] = useState(new Date().getTime());
+  const [reservationOpenDate, setReservationOpenDate] = useState('');
+  const [reservationCloseDate, setReservationCloseDate] = useState('');
+  const [reservationOpenTime, setReservationOpenTime] = useState('');
+  const [reservationCloseTime, setReservationCloseTime] = useState('');
+  const [concertDate, setConcertDate] = useState('');
+  const [concertTime, setConcertTime] = useState('');
   const [ticketPrice, setTicketPrice] = useState(0);
 
   const [concertImagePath, setconcertImagePath] = useState('');
@@ -177,6 +177,26 @@ function ConcertUploadPage(props) {
 
   const onSubmit = (e) => {
     e.preventDefault();
+
+    if (!concertTitle || !description || !concertAddress || !numOfSeat) {
+      alert('공연정보를 입력해주세요.');
+      return;
+    }
+    if (!concertImagePath || !seatImagePath || !ticketImagePath) {
+      alert('이미지란이 비었습니다. 이미지를 넣어주세요.');
+      return;
+    }
+    if (
+      !reservationOpenDate ||
+      !reservationCloseDate ||
+      !reservationOpenTime ||
+      !reservationCloseTime ||
+      !concertDate ||
+      !concertTime
+    ) {
+      alert('날짜와 시간을 선택해주세요.');
+      return;
+    }
     const variables = {
       _id: concertTitle + Date.now(),
       concertInfo: {
