@@ -1,13 +1,14 @@
 import { Button, Typography, Card } from 'antd-v3';
 import Axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { web3, mintContract, purchaseContract } from '../../../web3Config';
 import { purchaseContractAddress } from '../../../smartContractConfig';
 /* import ticketPageStyle from './TicketPage.module.css'; */
 
 const { Text } = Typography;
 const TicketPage = () => {
+  const navigate = useNavigate();
   const { concertId, ticketId } = useParams();
   const [concertTitle, setConcertTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -26,9 +27,13 @@ const TicketPage = () => {
       if (writerAccount === account[0]) {
         return alert('해당 공연의 등록자는 티켓을 구매할 수 없습니다.');
       }
-      const response = await purchaseContract.methods
+      await purchaseContract.methods
         .purchaseTicketToken(ticketId)
-        .send({ from: account[0], value: ticketPrice });
+        .send({ from: account[0], value: ticketPrice })
+        .then(() => {
+          alert('구매를 완료하였습니다.');
+          navigate('/');
+        });
     } catch (error) {
       console.error(error);
     }
