@@ -4,15 +4,23 @@ import concertStyle from '../../MainPage/MainPage.module.css';
 import Meta from 'antd-v3/lib/card/Meta';
 import { mintContract } from '../../../../web3Config';
 import Axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const PurchaseHistory = ({ account }) => {
+  const navigate = useNavigate();
   const [usedTickets, setUsedTickets] = useState([]);
   const [unUsedTickets, setUnUsedTickets] = useState([]);
   const [balances, setBalances] = useState(0);
 
   const onUseTicket = async (ticketId) => {
     await mintContract.methods.useTicket(ticketId).send({ from: account });
-    const useCheck = await mintContract.methods.ticketUsed(ticketId).call();
+    await mintContract.methods
+      .ticketUsed(ticketId)
+      .call()
+      .then(() => {
+        alert('티켓이 사용되었습니다.');
+        navigate('/');
+      });
   };
 
   const getBalances = async () => {
