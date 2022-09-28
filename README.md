@@ -11,9 +11,9 @@
 - visual studio 2015 or 2017 : Desktop development with C++ (for gyp module) 
 
 ### Need to change
-- 'client/node_modules/antd-v3/es/tree/DirectoryTree.js'
+- `client/node_modules/antd-v3/es/tree/DirectoryTree.js`
   - "rc-tree/es/util" => "rc-tree-v3/es/util"
-- 'client/node_modules/antd-v3/es/tree/util.js'
+- `client/node_modules/antd-v3/es/tree/util.js`
   - "rc-tree/es/util" => "rc-tree-v3/es/util"
 - Do first!
 
@@ -21,5 +21,5 @@
 cd truffle
 truffle migrate --reset
 ```
-  - Then, move MintTicketToken.json and PurchaseTicketToken.json to src directory.
-  - Update src/smartContractConfig.js file's contract address and privateKey.
+  - Then, move `MintTicketToken.json` and `PurchaseTicketToken.json` to `src` directory.
+  - Create `src/smartContractConfig.js` file, and write __contract address__ and __privateKey__.
