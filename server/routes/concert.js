@@ -5,44 +5,27 @@ const { ObjectId } = require("mongodb");
 
 router.get("/getConcerts", (req, res) => {
   const { search, sort } = req.query;
+  let sortList = [
+    { "concertInfo.concertDate.date": "1" },
+    { createdAt: "-1" },
+    { "concertInfo.concertTitle": "1" },
+    { "concertInfo.reservation.close": "1" },
+  ];
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = ("0" + (1 + date.getMonth())).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
+  var today = year + "-" + month + "-" + day;
 
-  if (sort == 0) {
-    Concert.find({
-      "concertInfo.concertTitle": { $regex: search, $options: "i" },
-    })
-      .sort({ "concertInfo.concertDate.date": "1" })
-      .exec((err, concerts) => {
-        if (err) return res.status(400).json({ success: false, err });
-        return res.status(200).json({ success: true, concerts });
-      });
-  } else if (sort == 1) {
-    Concert.find({
-      "concertInfo.concertTitle": { $regex: search, $options: "i" },
-    })
-      .sort({ createdAt: "-1" })
-      .exec((err, concerts) => {
-        if (err) return res.status(400).json({ success: false, err });
-        return res.status(200).json({ success: true, concerts });
-      });
-  } else if (sort == 2) {
-    Concert.find({
-      "concertInfo.concertTitle": { $regex: search, $options: "i" },
-    })
-      .sort({ "concertInfo.concertTitle": "1" })
-      .exec((err, concerts) => {
-        if (err) return res.status(400).json({ success: false, err });
-        return res.status(200).json({ success: true, concerts });
-      });
-  } else {
-    Concert.find({
-      "concertInfo.concertTitle": { $regex: search, $options: "i" },
-    })
-      .sort({ "concertInfo.reservation.close": "1" })
-      .exec((err, concerts) => {
-        if (err) return res.status(400).json({ success: false, err });
-        return res.status(200).json({ success: true, concerts });
-      });
-  }
+  Concert.find({
+    "concertInfo.concertTitle": { $regex: search, $options: "i" },
+    "concertInfo.reservation.close.date": { $gt: today },
+  })
+    .sort(sortList[sort])
+    .exec((err, concerts) => {
+      if (err) return res.status(400).json({ success: false, err });
+      return res.status(200).json({ success: true, concerts });
+    });
 });
 
 router.get("/getUserConcerts", (req, res) => {
