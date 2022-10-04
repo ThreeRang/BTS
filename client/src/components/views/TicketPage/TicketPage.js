@@ -126,7 +126,7 @@ const TicketPage = () => {
               <br />
               {/*  <p>{ticketPrice}</p> */}
               <Button onClick={onPurchaseTicket}>Buy now</Button>
-              <Button onClick={oncheck}>check</Button>
+              {/* <Button onClick={oncheck}>check</Button> */}
               <br />
             </Card>
           </div>
