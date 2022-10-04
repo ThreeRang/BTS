@@ -6,16 +6,23 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./PurchaseTicketToken.sol";
 //https://docs.openzeppelin.com/contracts/4.x/api/utils#Counters
 contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
+    PurchaseTicketToken public purchaseTicketToken;
+
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     //공연좌석에 따른 티켓Id
     mapping(string => mapping(uint256 => uint256)) private _ticketIdOfConcertSeatnum;
     //티켓Id에 따른 가격
     mapping(uint256 => uint256) private _ticketPrices;
+    //티켓Id에 따른 공연Id
+    mapping(uint256 => string) private _ticketConcert;
     //티켓Id에 따른 좌석번호
     mapping(uint256 => uint256) private _ticketSeatnum;
+    //티켓Id에 따른 사용여부
+    mapping(uint256 => bool) private _ticketUsed;
     //event정의
     event info(string name, address own, uint256 id, string URI, uint256 seatNum, uint256 price); 
 
@@ -75,6 +82,16 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         _ticketSeatnum[tokenId] = seatnum;
     }
 
+    function _setTicketUsed(uint256 tokenId, bool used) internal virtual{
+        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+        _ticketUsed[tokenId] = used;
+    }
+
+    function _setTicketConcert(uint256 tokenId, string memory concertId) internal virtual{
+        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+        _ticketConcert[tokenId] = concertId;
+    }
+
     function ticketIdOfConcertSeatnum(string memory concertId, uint256 seetnum) 
         public 
         view 
@@ -91,12 +108,36 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         return _ticketPrices[tokenId];
     }
 
+    function ticketConcert(uint256 tokenId) 
+        public 
+        view 
+        returns(string memory)
+    {
+        return _ticketConcert[tokenId];
+    }
+
     function ticketSeatnum(uint256 tokenId) 
         public 
         view 
         returns(uint256)
     {
         return _ticketSeatnum[tokenId];
+    }
+
+    function ticketUsed(uint256 tokenId) 
+        public 
+        view 
+        returns(bool)
+    {
+        return _ticketUsed[tokenId];
+    }
+
+    function useTicket(uint256 tokenId) 
+        public 
+        returns(bool)
+    {
+        _setTicketUsed(tokenId, true);
+        return _ticketUsed[tokenId];
     }
 
     function mintTicketToken(address owner, string memory metadataURI, string memory concertId, uint256 seatnum, uint256 price)
@@ -110,11 +151,18 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         _safeMint(owner, id);
         _setTokenURI(id, metadataURI);
         _setTicketIdOfConcertSeatnum(concertId, seatnum, id);
+        _setTicketConcert(id, concertId);
         _setTicketPrices(id, price);
         _setTicketSeatnum(id, seatnum);
-
+        _setTicketUsed(id, false);
+        purchaseTicketToken.setForSaleTicketToken(id, price);
+        
         emit info("In sol : success minting!", owner, id, metadataURI, seatnum, price); 
 
         return id;
+    }
+
+    function setPurchaseTicketToken(address _purchaseTicketToken) public{
+        purchaseTicketToken = PurchaseTicketToken(_purchaseTicketToken);
     }
 }

@@ -18,11 +18,11 @@ contract PurchaseTicketToken{
     uint256[] public onSaleTicketTokenArray;
 
     function setForSaleTicketToken(uint256 _tokenId, uint256 _ticketPrice) public{
-        address ticketOwner = mintTicketTokenAddress.ownerOf(_tokenId);
+        // address ticketOwner = mintTicketTokenAddress.ownerOf(_tokenId);
 
-        require(ticketOwner == msg.sender, "Caller is not ticket token owner.");
+        // require(ticketOwner == msg.sender, "Caller is not ticket token owner.");
         require(_ticketPrice > 0, "Price is zero or lower.");
-        require (mintTicketTokenAddress.isApprovedForAll(ticketOwner, address(this)), "ticket token owner did not approve token.");
+        // require (mintTicketTokenAddress.isApprovedForAll(ticketOwner, address(this)), "ticket token owner did not approve token.");
 
         ticketTokenPrices[_tokenId] = _ticketPrice;
         onSaleTicketTokenArray.push(_tokenId);
@@ -54,5 +54,14 @@ contract PurchaseTicketToken{
 
     function getOnSaleTicketTokenArrayLenth() view public returns (uint256){
         return onSaleTicketTokenArray.length;
+    }
+    
+    function getInOnSaleTicketTokenArray(uint256 _tokenId) view public returns (bool){
+        for(uint256 i = 0; i < onSaleTicketTokenArray.length ; i++){
+            if(onSaleTicketTokenArray[i] == _tokenId){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -2,8 +2,9 @@ import Meta from 'antd-v3/lib/card/Meta';
 import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import { Col } from 'antd-v3';
-import { mintContract, web3 } from '../../../../web3Config';
+import { mintContract, purchaseContract, web3 } from '../../../../web3Config';
 import ticketStyle from './ConcertItemsTab.module.css';
+
 const TicketCard = ({ concertData }) => {
   return (
     <div style={{ width: '85%', margin: 'auto auto' }}>
@@ -51,6 +52,8 @@ const ConcertItemsTab = ({ concertId }) => {
       var tickets = [];
       for (let i = 1; i <= numOfSeat; i++) {
         const ticketId = await mintContract.methods.ticketIdOfConcertSeatnum(concertId, i).call();
+        const onSale = await purchaseContract.methods.getInOnSaleTicketTokenArray(ticketId).call();
+        if (!onSale) continue;
         const ticketPrice = await mintContract.methods.ticketPrices(ticketId).call();
 
         const ticketData = {

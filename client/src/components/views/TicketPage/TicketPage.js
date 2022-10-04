@@ -1,19 +1,14 @@
 import { Button, Typography, Card } from 'antd-v3';
 import Axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { web3, mintContract, purchaseContract } from '../../../web3Config';
 import { purchaseContractAddress } from '../../../smartContractConfig';
 /* import ticketPageStyle from './TicketPage.module.css'; */
 
 const { Text } = Typography;
 const TicketPage = () => {
-  // const account = useParams().ticketAddress;
-  // const [title, setTitle] = useState('');
-  // const [ipfsHash, setIpfsHash] = useState('');
-  // const [price, setPrice] = useState(0);
-  // const [seatNum, setSeatNum] = useState('');
-
+  const navigate = useNavigate();
   const { concertId, ticketId } = useParams();
   const [concertTitle, setConcertTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -29,9 +24,16 @@ const TicketPage = () => {
   const onPurchaseTicket = async () => {
     try {
       if (!account) return;
-      const response = await purchaseContract.methods
+      if (writerAccount === account[0]) {
+        return alert('해당 공연의 등록자는 티켓을 구매할 수 없습니다.');
+      }
+      await purchaseContract.methods
         .purchaseTicketToken(ticketId)
-        .send({ from: account[0], value: ticketPrice });
+        .send({ from: account[0], value: ticketPrice })
+        .then(() => {
+          alert('구매를 완료하였습니다.');
+          navigate('/');
+        });
     } catch (error) {
       console.error(error);
     }
@@ -47,11 +49,16 @@ const TicketPage = () => {
     });
   }, [ticketPrice, seatNum]);
   const oncheck = async () => {
-    console.log(account);
-    const owner = await mintContract.methods.ownerOf(ticketId).call();
-    const approvalNow = await mintContract.methods.isApprovedForAll(account[0], purchaseContractAddress).call();
-    console.log(owner);
-    console.log(approvalNow);
+    try {
+      const owner = await mintContract.methods.ownerOf(ticketId).call();
+      const approvalNow = await mintContract.methods.isApprovedForAll(account[0], purchaseContractAddress).call();
+      console.log(account);
+      console.log(writerAccount);
+      console.log(owner);
+      console.log(approvalNow);
+    } catch (error) {
+      console.error(error);
+    }
   };
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
@@ -119,7 +126,7 @@ const TicketPage = () => {
               <br />
               {/*  <p>{ticketPrice}</p> */}
               <Button onClick={onPurchaseTicket}>Buy now</Button>
-              <Button onClick={oncheck}>check</Button>
+              {/* <Button onClick={oncheck}>check</Button> */}
               <br />
             </Card>
           </div>
