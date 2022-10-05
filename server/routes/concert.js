@@ -19,13 +19,13 @@ function getToday() {
 /**
  * Get concert information that meets the conditions
  *
- * @param req search info, sort option
+ * @param req search info, sort option, close or open
  * @param res 200 : success, 400 : fail
  *
  * @returns success: true or false, concerts info
  */
 router.get("/getConcerts", (req, res) => {
-  const { search, sort } = req.query;
+  const { search, sort, close } = req.query;
 
   let today = getToday();
   let sortList = [
@@ -35,9 +35,16 @@ router.get("/getConcerts", (req, res) => {
     { "concertInfo.reservation.close": "1" },
   ];
 
+  let expired = [
+    { "concertInfo.reservation.close.date": { $gte: today } },
+    { "concertInfo.reservation.close.date": { $lt: today } },
+  ];
+
   Concert.find({
-    "concertInfo.concertTitle": { $regex: search, $options: "i" },
-    "concertInfo.reservation.close.date": { $gt: today },
+    $and: [
+      { "concertInfo.concertTitle": { $regex: search, $options: "i" } },
+      expired[close],
+    ],
   })
     .sort(sortList[sort])
     .exec((err, concerts) => {
