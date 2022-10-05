@@ -1,6 +1,6 @@
 import Meta from 'antd-v3/lib/card/Meta';
 import Axios from 'axios';
-import { Col, Typography, Row } from 'antd-v3';
+import { Col, Typography, Row, Button } from 'antd-v3';
 import React, { useEffect, useState } from 'react';
 import concertStyle from './MainPage.module.css';
 import { Input, Select } from 'antd-v3';
@@ -18,10 +18,15 @@ const sortOption = [
   { value: 3, label: '예약마감순' },
 ];
 
+const expired = [
+  { value: 0, label: 'CLOSED' },
+  { value: 1, label: 'OPEN' },
+];
 const MainPage = () => {
   const [concerts, setConcerts] = useState([]);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState(0);
+  const [close, setClose] = useState(0);
   /* const [userImage, setUserImage] = useState('');
   const [account, setAccount] = useState(''); */
   const onSearchChange = (e) => {
@@ -32,17 +37,24 @@ const MainPage = () => {
     setSort(slectSort);
   };
 
+  const onClose = () => {
+    if (close == 0) {
+      setClose(1);
+    } else {
+      setClose(0);
+    }
+  };
   useEffect(() => {
-    Axios.get('http://localhost:5000/api/concert/getConcerts', { params: { search: search, sort: sort } }).then(
-      (response) => {
-        if (response.data.success) {
-          setConcerts(response.data.concerts);
-        } else {
-          alert('콘서트 가져오기를 실패 했습니다.');
-        }
+    Axios.get('http://localhost:5000/api/concert/getConcerts', {
+      params: { search: search, close: close, sort: sort },
+    }).then((response) => {
+      if (response.data.success) {
+        setConcerts(response.data.concerts);
+      } else {
+        alert('콘서트 가져오기를 실패 했습니다.');
       }
-    );
-  }, [search, sort]);
+    });
+  }, [search, sort, close]);
   const renderCards = concerts.map((concert, index) => {
     return (
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
@@ -101,7 +113,9 @@ const MainPage = () => {
           <div style={{ display: 'flex', float: 'left' }}>
             <Search placeholder="Search..." onChange={onSearchChange} value={search} style={{ width: 200 }} />
           </div>
+
           <div style={{ display: 'flex', float: 'right' }}>
+            <Button onClick={onClose}>{expired[close].label}</Button>
             <Select defaultValue="공연마감순" style={{ width: 120 }} onChange={onSortChange}>
               {sortOption.map((item, index) => (
                 <Option key={index} value={item.value}>
