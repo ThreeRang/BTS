@@ -1,21 +1,39 @@
 const express = require("express");
 const router = express.Router();
 const { Concert } = require("../models/Concert");
-const { ObjectId } = require("mongodb");
 
+/**
+ * Get a today information
+ *
+ * @returns year-month-day
+ */
+function getToday() {
+  var date = new Date();
+  var year = date.getFullYear();
+  var month = ("0" + (1 + date.getMonth())).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
+
+  return year + "-" + month + "-" + day;
+}
+
+/**
+ * Get concert information that meets the conditions
+ *
+ * @param req search info, sort option
+ * @param res 200 : success, 400 : fail
+ *
+ * @returns success: true or false, concerts info
+ */
 router.get("/getConcerts", (req, res) => {
   const { search, sort } = req.query;
+
+  let today = getToday();
   let sortList = [
     { "concertInfo.concertDate.date": "1" },
     { createdAt: "-1" },
     { "concertInfo.concertTitle": "1" },
     { "concertInfo.reservation.close": "1" },
   ];
-  var date = new Date();
-  var year = date.getFullYear();
-  var month = ("0" + (1 + date.getMonth())).slice(-2);
-  var day = ("0" + date.getDate()).slice(-2);
-  var today = year + "-" + month + "-" + day;
 
   Concert.find({
     "concertInfo.concertTitle": { $regex: search, $options: "i" },
@@ -28,6 +46,14 @@ router.get("/getConcerts", (req, res) => {
     });
 });
 
+/**
+ * get all of concert information registered by a user
+ *
+ * @param req search info, sort option
+ * @param res 200 : success, 400 : fail
+ *
+ * @returns success: true or false, concerts info
+ */
 router.get("/getUserConcerts", (req, res) => {
   const { _id } = req.query;
 
@@ -39,6 +65,14 @@ router.get("/getUserConcerts", (req, res) => {
     });
 });
 
+/**
+ * get a concert information
+ *
+ * @param req search info, sort option
+ * @param res 200 : success, 400 : fail
+ *
+ * @returns success: true or false, concerts info
+ */
 router.get("/getConcertInfo", (req, res) => {
   const { _id } = req.query;
   Concert.findOne({ _id: _id }).exec((err, concert) => {
@@ -47,6 +81,14 @@ router.get("/getConcertInfo", (req, res) => {
   });
 });
 
+/**
+ * modify a concert information
+ *
+ * @param req search info, sort option
+ * @param res 200 : success, 400 : fail
+ *
+ * @returns success: true or false
+ */
 router.patch("/updateConcert", (req, res) => {
   try {
     const { _id, concertInfo } = req.body;
