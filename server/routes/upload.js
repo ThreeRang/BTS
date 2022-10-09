@@ -6,6 +6,7 @@ const path = require("path");
 const express = require("express");
 const router = express.Router();
 const { Concert } = require("../models/Concert");
+const ipfsCLient = require("ipfs-http-client");
 
 let storageConcertImage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -21,6 +22,38 @@ let storageConcertImage = multer.diskStorage({
     }
     cb(null, true);
   },
+});
+
+const ipfs = new ipfsCLient({
+  host: "localhost",
+  port: "5001",
+  protocol: "http",
+});
+
+const onUploadIpfs = async (imagepath) => {
+  console.log("Now in uploadIPFS");
+  try {
+    const file = fs.readFileSync(imagepath);
+    const fileAdded = await ipfs.add({ path: imagepath, content: file });
+    const result = String(fileAdded.cid);
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+router.post("/uploadIPFS", (req, res) => {
+  const filePath = req.body.filePath;
+  onUploadIpfs(filePath).then((response) => {
+    fs.unlink(filePath, (err) => {
+      if (err) console.error(err);
+    });
+    return res.json({
+      success: true,
+      filePath: filePath,
+      fileHash: response,
+    });
+  });
 });
 
 router.post(

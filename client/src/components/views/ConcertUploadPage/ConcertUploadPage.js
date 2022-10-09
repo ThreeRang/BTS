@@ -36,14 +36,8 @@ function ConcertUploadPage(props) {
   const [userImagePath, setUserImagePath] = useState('');
 
   const [metadataURI, setMetadataURI] = useState('');
+  const [concertImageHash, setconcertImageHash] = useState('');
 
-  /*for ipfs '/ip4/127.0.0.1/tcp/5001'*/
-  // const ipfs = create({
-  //   host: 'ipfs.infura.io',
-  //   port: 5001,
-  //   protocol: 'https',
-  // });
-  // const [files, setFiles] = useState({});
   const onSetting = async () => {
     const setOne = await mintContract.methods.setPurchaseTicketToken(purchaseContractAddress).send({ from: account });
     const setTwo = await mintContract.methods.setApprovalForAll(purchaseContractAddress, true).send({ from: account });
@@ -51,6 +45,11 @@ function ConcertUploadPage(props) {
 
   const onSubmitNft = async (concert) => {
     var tokensId = [];
+    Axios.post('http://localhost:5000/api/upload/uploadIPFS', {
+      filePath: concertImagePath,
+    }).then((response) => {
+      setconcertImageHash(response.data.fileHash);
+    });
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
