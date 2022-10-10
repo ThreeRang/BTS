@@ -36,7 +36,7 @@ function ConcertUploadPage(props) {
   const [userImagePath, setUserImagePath] = useState('');
 
   const [metadataURI, setMetadataURI] = useState('');
-  const [concertImageHash, setconcertImageHash] = useState('');
+  const [imageHash, setImageHash] = useState('');
 
   const onSetting = async () => {
     const setOne = await mintContract.methods.setPurchaseTicketToken(purchaseContractAddress).send({ from: account });
@@ -46,9 +46,12 @@ function ConcertUploadPage(props) {
   const onSubmitNft = async (concert) => {
     var tokensId = [];
     Axios.post('http://localhost:5000/api/upload/uploadIPFS', {
-      filePath: concertImagePath,
+      concertImagePath: concertImagePath,
+      seatImagePath: seatImagePath,
+      ticketImagePath: ticketImagePath,
     }).then((response) => {
-      setconcertImageHash(response.data.fileHash);
+      console.log(response);
+      setImageHash(response.data.imageHash);
     });
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
@@ -136,7 +139,8 @@ function ConcertUploadPage(props) {
     formData.append('file', files[0]);
     Axios.post('http://localhost:5000/api/upload/concertImage', formData, config).then((response) => {
       if (response.data.success) {
-        setconcertImagePath(`image/concertImage/${response.data.fileName}`);
+        setconcertImagePath(`metadata_image/concertImage/${response.data.fileName}`);
+        console.log(response.data.fileName);
       } else {
         alert('사진 업로드를 실패했습니다.');
         navigate('/');
@@ -151,7 +155,7 @@ function ConcertUploadPage(props) {
     formData.append('file', files[0]);
     Axios.post('http://localhost:5000/api/upload/seatImage', formData, config).then((response) => {
       if (response.data.success) {
-        setSeatImagePath(`image/seatImage/${response.data.fileName}`);
+        setSeatImagePath(`metadata_image/seatImage/${response.data.fileName}`);
       } else {
         alert('사진 업로드를 실패했습니다.');
         navigate('/');
@@ -166,7 +170,7 @@ function ConcertUploadPage(props) {
     formData.append('file', files[0]);
     Axios.post('http://localhost:5000/api/upload/ticketImage', formData, config).then((response) => {
       if (response.data.success) {
-        setTicketImagePath(`image/ticketImage/${response.data.fileName}`);
+        setTicketImagePath(`metadata_image/ticketImage/${response.data.fileName}`);
       } else {
         alert('사진 업로드를 실패했습니다.');
         navigate('/');

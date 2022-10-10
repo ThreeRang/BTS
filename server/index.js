@@ -41,6 +41,7 @@ const connect = async () => {
     //use this to show the image you have in node js server to client (react js)
     //https://stackoverflow.com/questions/48914987/send-image-path-from-node-js-express-server-to-react-client
     app.use("/image", express.static("image"));
+    app.use("/metadata_image", express.static("metadata_image"));
     app.use("/truffle", express.static("truffle"));
     app.use("/api/upload", require("./routes/upload"));
     app.use("/api/users", require("./routes/users"));
