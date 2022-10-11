@@ -9,22 +9,6 @@ const { Concert } = require("../models/Concert");
 const ipfsCLient = require("ipfs-http-client");
 const { response } = require("express");
 
-let storageConcertImage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "metadata_image/concertImage/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}_${file.originalname}`);
-  },
-  fileFilter: (req, file, cb) => {
-    var ext = path.extname(file.originalname);
-    if (ext !== ".png" || ext !== ".jpg") {
-      return cb(null, false);
-    }
-    cb(null, true);
-  },
-});
-
 const ipfs = new ipfsCLient({
   host: "localhost",
   port: "5001",
@@ -39,18 +23,36 @@ const onUploadIpfs = async (imagePath) => {
 
     console.log("still in uploadIPFS 1");
 
-    await ipfs.files.mkdir("/meta_image");
+    await ipfs.files.mkdir(`/${imagePath.concertId}`);
 
-    await ipfs.files.write("/meta_image/concertImage.jpg", concertImage, {
-      create: true,
-    });
-    await ipfs.files.write("/meta_image/seatImage.jpg", seatImage, {
-      create: true,
-    });
-    await ipfs.files.write("/meta_image/ticketImage.png", ticketImage, {
-      create: true,
-    });
-    const stat = await ipfs.files.stat("/meta_image");
+    await ipfs.files.write(
+      `/${imagePath.concertId}/concertImage${path.extname(
+        imagePath.concertImagePath
+      )}`,
+      concertImage,
+      {
+        create: true,
+      }
+    );
+    await ipfs.files.write(
+      `/${imagePath.concertId}/seatImage${path.extname(
+        imagePath.concertImagePath
+      )}`,
+      seatImage,
+      {
+        create: true,
+      }
+    );
+    await ipfs.files.write(
+      `/${imagePath.concertId}/ticketImage${path.extname(
+        imagePath.concertImagePath
+      )}`,
+      ticketImage,
+      {
+        create: true,
+      }
+    );
+    const stat = await ipfs.files.stat(`/${imagePath.concertId}`);
     // const fileAdded = await ipfs.addAll(
     //   [
     //     { path: imagePath.concertImagePath, content: concertImage },
@@ -75,6 +77,7 @@ router.post("/uploadIPFS", (req, res) => {
     concertImagePath: concertImagePath,
     seatImagePath: seatImagePath,
     ticketImagePath: ticketImagePath,
+    concertPath: req.body.concertId,
   };
   onUploadIpfs(imagePath).then((response) => {
     fs.unlink(concertImagePath, (err) => {
@@ -91,6 +94,22 @@ router.post("/uploadIPFS", (req, res) => {
       imageHash: response,
     });
   });
+});
+
+let storageConcertImage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "metadata_image/concertImage/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}_${file.originalname}`);
+  },
+  fileFilter: (req, file, cb) => {
+    var ext = path.extname(file.originalname);
+    if (ext !== ".png" || ext !== ".jpg") {
+      return cb(null, false);
+    }
+    cb(null, true);
+  },
 });
 
 router.post(

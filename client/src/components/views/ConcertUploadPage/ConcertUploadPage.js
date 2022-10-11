@@ -49,6 +49,7 @@ function ConcertUploadPage(props) {
       concertImagePath: concertImagePath,
       seatImagePath: seatImagePath,
       ticketImagePath: ticketImagePath,
+      concertId: concert._id,
     }).then((response) => {
       console.log(response);
       setImageHash(response.data.imageHash);
