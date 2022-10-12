@@ -45,7 +45,7 @@ function ConcertUploadPage(props) {
 
   const onSubmitNft = async (concert) => {
     var tokensId = [];
-    Axios.post('http://localhost:5000/api/upload/uploadIPFS', {
+    Axios.post('http://localhost:5000/api/upload/uploadImageIPFS', {
       concertImagePath: concertImagePath,
       seatImagePath: seatImagePath,
       ticketImagePath: ticketImagePath,
@@ -54,6 +54,7 @@ function ConcertUploadPage(props) {
       console.log(response);
       setImageHash(response.data.imageHash);
     });
+    // Axios.post('http://localhost:5000/api/upload/uploadMetadataIPFS', concert);
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
