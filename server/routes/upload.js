@@ -15,7 +15,7 @@ const ipfs = new ipfsCLient({
   protocol: "http",
 });
 
-const onUploadIpfs = async (imagePath) => {
+const onUploadImageIpfs = async (imagePath) => {
   try {
     const concertImage = fs.readFileSync(imagePath.concertImagePath);
     const seatImage = fs.readFileSync(imagePath.seatImagePath);
@@ -23,10 +23,10 @@ const onUploadIpfs = async (imagePath) => {
 
     console.log("still in uploadIPFS 1");
 
-    await ipfs.files.mkdir(`/${imagePath.concertId}`);
+    await ipfs.files.mkdir(`/${imagePath.concertPath}`);
 
     await ipfs.files.write(
-      `/${imagePath.concertId}/concertImage${path.extname(
+      `/${imagePath.concertPath}/concertImage${path.extname(
         imagePath.concertImagePath
       )}`,
       concertImage,
@@ -35,7 +35,7 @@ const onUploadIpfs = async (imagePath) => {
       }
     );
     await ipfs.files.write(
-      `/${imagePath.concertId}/seatImage${path.extname(
+      `/${imagePath.concertPath}/seatImage${path.extname(
         imagePath.concertImagePath
       )}`,
       seatImage,
@@ -44,7 +44,7 @@ const onUploadIpfs = async (imagePath) => {
       }
     );
     await ipfs.files.write(
-      `/${imagePath.concertId}/ticketImage${path.extname(
+      `/${imagePath.concertPath}/ticketImage${path.extname(
         imagePath.concertImagePath
       )}`,
       ticketImage,
@@ -52,15 +52,7 @@ const onUploadIpfs = async (imagePath) => {
         create: true,
       }
     );
-    const stat = await ipfs.files.stat(`/${imagePath.concertId}`);
-    // const fileAdded = await ipfs.addAll(
-    //   [
-    //     { path: imagePath.concertImagePath, content: concertImage },
-    //     { path: imagePath.seatImagePath, content: seatImage },
-    //     { path: imagePath.ticketImagePath, content: ticketImage },
-    //   ],
-    //   { wrapWithDirectory: true }
-    // );
+    const stat = await ipfs.files.stat(`/${imagePath.concertPath}`);
     const result = String(stat.cid);
     console.log(stat.cid);
     return result;
@@ -69,7 +61,7 @@ const onUploadIpfs = async (imagePath) => {
   }
 };
 
-router.post("/uploadIPFS", (req, res) => {
+router.post("/uploadImageIPFS", (req, res) => {
   const concertImagePath = req.body.concertImagePath;
   const seatImagePath = req.body.seatImagePath;
   const ticketImagePath = req.body.ticketImagePath;
@@ -79,7 +71,7 @@ router.post("/uploadIPFS", (req, res) => {
     ticketImagePath: ticketImagePath,
     concertPath: req.body.concertId,
   };
-  onUploadIpfs(imagePath).then((response) => {
+  onUploadImageIpfs(imagePath).then((response) => {
     fs.unlink(concertImagePath, (err) => {
       if (err) console.error(err);
     });
@@ -94,6 +86,12 @@ router.post("/uploadIPFS", (req, res) => {
       imageHash: response,
     });
   });
+});
+
+router.post("/uploadMetadataIPFS", (req, res) => {
+  const metadata = JSON.stringify(req.body);
+  console.log("now metadata is : ");
+  console.log(metadata);
 });
 
 let storageConcertImage = multer.diskStorage({
