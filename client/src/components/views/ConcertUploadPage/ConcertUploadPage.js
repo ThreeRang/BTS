@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import uploadStyle from './ConcertUploadPage.module.css';
 import { mintContract, purchaseContract, web3 } from '../../../web3Config';
 import { privateKey, mintContractAddress, purchaseContractAddress } from '../../../smartContractConfig';
+import { response } from 'express';
 // import MintTicketTokenJSON from './MintTicketToken.json';
 // import MintTicketToken from '../../../abi/MintTicketToken.json';
 // import { create } from 'ipfs-http-client';
@@ -37,6 +38,7 @@ function ConcertUploadPage(props) {
 
   const [metadataURI, setMetadataURI] = useState('');
   const [imageHash, setImageHash] = useState('');
+  const [metadataHash, setMetadataHash] = useState('');
 
   const onSetting = async () => {
     const setOne = await mintContract.methods.setPurchaseTicketToken(purchaseContractAddress).send({ from: account });
@@ -53,8 +55,12 @@ function ConcertUploadPage(props) {
     }).then((response) => {
       console.log(response);
       setImageHash(response.data.imageHash);
+      concert.image = imageHash;
+      console.log(concert);
     });
-    // Axios.post('http://localhost:5000/api/upload/uploadMetadataIPFS', concert);
+    Axios.post('http://localhost:5000/api/upload/uploadMetadataIPFS', concert).then((response) => {
+      setMetadataHash(response.data.metaHash);
+    });
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
