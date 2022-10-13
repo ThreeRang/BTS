@@ -88,10 +88,31 @@ router.post("/uploadImageIPFS", (req, res) => {
   });
 });
 
+const onUploadMetadataIpfs = async (metadata, concertPath) => {
+  try {
+    await ipfs.files.write(`/${concertPath}/metadata}`, metadata, {
+      create: true,
+    });
+    const stat = await ipfs.files.stat(`/${concertPath}/metadata`);
+    const result = String(stat.cid);
+    console.log(stat.cid);
+    return result;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 router.post("/uploadMetadataIPFS", (req, res) => {
+  const concertPath = req.body._id;
   const metadata = JSON.stringify(req.body);
   console.log("now metadata is : ");
   console.log(metadata);
+  onUploadMetadataIpfs(metadata, concertPath).then((response) => {
+    return res.json({
+      success: true,
+      metaHash: response,
+    });
+  });
 });
 
 let storageConcertImage = multer.diskStorage({
