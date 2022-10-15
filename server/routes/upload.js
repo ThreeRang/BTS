@@ -90,7 +90,7 @@ router.post("/uploadImageIPFS", (req, res) => {
 
 const onUploadMetadataIpfs = async (metadata, concertPath) => {
   try {
-    await ipfs.files.write(`/${concertPath}/metadata}`, metadata, {
+    await ipfs.files.write(`/${concertPath}/metadata`, metadata, {
       create: true,
     });
     const stat = await ipfs.files.stat(`/${concertPath}/metadata`);
