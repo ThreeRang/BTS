@@ -12,6 +12,35 @@ import { privateKey, mintContractAddress, purchaseContractAddress } from '../../
 
 const { TextArea } = Input;
 const { Title } = Typography;
+let metadata = {
+  _id: '',
+  concertInfo: {
+    _id: '',
+    concertTitle: '',
+    description: '',
+    concertDate: {
+      date: '',
+      time: '',
+    },
+    numOfSeat: 0,
+    concertAddress: '',
+    ticketPrice: 0,
+    reservation: {
+      open: {
+        date: '',
+        time: '',
+      },
+      close: {
+        date: '',
+        time: '',
+      },
+    },
+  },
+  image: {
+    imageHash: '',
+    userImage: '',
+  },
+};
 
 function ConcertUploadPage(props) {
   /*Register변수 DB에 저장할 때 누가 저장했는지 저장할 변수*/
@@ -40,8 +69,8 @@ function ConcertUploadPage(props) {
   const [metadataHash, setMetadataHash] = useState('');
 
   const onSetting = async () => {
-    const setOne = await mintContract.methods.setPurchaseTicketToken(purchaseContractAddress).send({ from: account });
-    const setTwo = await mintContract.methods.setApprovalForAll(purchaseContractAddress, true).send({ from: account });
+    await mintContract.methods.setPurchaseTicketToken(purchaseContractAddress).send({ from: account });
+    await mintContract.methods.setApprovalForAll(purchaseContractAddress, true).send({ from: account });
   };
 
   const onSubmitNft = async (concert) => {
@@ -92,39 +121,48 @@ function ConcertUploadPage(props) {
   /*-------------------onChange----------------------*/
   const onTitleChange = (e) => {
     setConcertTitle(e.currentTarget.value);
+    metadata.concertInfo.concertTitle = e.currentTarget.value;
   };
 
   const onDescriptionChange = (e) => {
     setDescription(e.currentTarget.value);
+    metadata.concertInfo.description = e.currentTarget.value;
   };
 
   const onConcertAddressChange = (e) => {
     setconcertAddress(e.currentTarget.value);
+    metadata.concertInfo.concertAddress = e.currentTarget.value;
   };
 
   const onNumOfSeatChange = (e) => {
     setNumOfSeat(e.currentTarget.value);
+    metadata.concertInfo.numOfSeat = e.currentTarget.value;
   };
 
   const onTicketPriceChange = (e) => {
     setTicketPrice(e.currentTarget.value);
+    metadata.concertInfo.ticketPrice = e.currentTarget.value;
   };
   /*
     예약 오픈 마감 일정 
   */
   const onOpenDateChange = (e) => {
     setReservationOpenDate(e.currentTarget.value);
+    metadata.concertInfo.reservation.open.date = e.currentTarget.value;
   };
 
   const onOpenTimeChange = (e) => {
     setReservationOpenTime(e.currentTarget.value);
+    metadata.concertInfo.reservation.open.time = e.currentTarget.value;
   };
 
   const onCloseDateChange = (e) => {
     setReservationCloseDate(e.currentTarget.value);
+    metadata.concertInfo.reservation.close.date = e.currentTarget.value;
   };
   const onCloseTimeChange = (e) => {
     setReservationCloseTime(e.currentTarget.value);
+    metadata.concertInfo.reservation.close.time = e.currentTarget.value;
   };
 
   /*
@@ -132,10 +170,12 @@ function ConcertUploadPage(props) {
   */
   const onConcertDateChange = (e) => {
     setConcertDate(e.currentTarget.value);
+    metadata.concertInfo.concertDate.date = e.currentTarget.value;
   };
 
   const onConcertTimeChange = (e) => {
     setConcertTime(e.currentTarget.value);
+    metadata.concertInfo.concertDate.time = e.currentTarget.value;
   };
 
   const onDropConcertImage = (files) => {
@@ -207,37 +247,10 @@ function ConcertUploadPage(props) {
       alert('날짜와 시간을 선택해주세요.');
       return;
     }
-    const variables = {
-      _id: concertTitle + Date.now(),
-      concertInfo: {
-        _id: account,
-        concertTitle: concertTitle,
-        description: description,
-        concertDate: {
-          date: concertDate,
-          time: concertTime,
-        },
-        numOfSeat: numOfSeat,
-        concertAddress: concertAddress,
-        reservation: {
-          open: {
-            date: reservationOpenDate,
-            time: reservationOpenTime,
-          },
-          close: {
-            date: reservationCloseDate,
-            time: reservationCloseTime,
-          },
-        },
-      },
-      image: {
-        concertImage: concertImagePath,
-        ticketImage: ticketImagePath,
-        seatImage: seatImagePath,
-        userImage: userImagePath,
-      },
-    };
-    Axios.post('http://localhost:5000/api/upload/uploadConcert', variables).then((response) => {
+    metadata._id = concertTitle + Date.now();
+    metadata.concertInfo._id = account;
+
+    Axios.post('http://localhost:5000/api/upload/uploadConcert', metadata).then((response) => {
       if (response.data.success) {
         message.success('업로드 중입니다...');
         onSetting().then(() => {

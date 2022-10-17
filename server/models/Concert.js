@@ -39,6 +39,11 @@ const concertSchema = mongoose.Schema(
         type: String,
         default: "",
       },
+      ticketPrice: {
+        //티켓 가격
+        type: Number,
+        default: 0,
+      },
       reservation: {
         open: {
           date: {
