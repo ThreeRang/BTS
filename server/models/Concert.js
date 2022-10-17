@@ -59,15 +59,7 @@ const concertSchema = mongoose.Schema(
       },
     },
     image: {
-      concertImage: {
-        type: String,
-        default: "",
-      },
-      ticketImage: {
-        type: String,
-        default: "",
-      },
-      seatImage: {
+      imageHash: {
         type: String,
         default: "",
       },
