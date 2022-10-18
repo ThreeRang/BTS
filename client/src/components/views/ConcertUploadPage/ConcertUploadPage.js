@@ -75,20 +75,21 @@ function ConcertUploadPage(props) {
 
   const onSubmitNft = async (concert) => {
     var tokensId = [];
-    Axios.post('http://localhost:5000/api/upload/uploadImageIPFS', {
+    Axios.post('http://localhost:5000/api/upload/uploadIPFS', {
       concertImagePath: concertImagePath,
       seatImagePath: seatImagePath,
       ticketImagePath: ticketImagePath,
-      concertId: concert._id,
+      metadata: metadata,
     }).then((response) => {
-      console.log(response);
+      metadata.image.imageHash = response.data.imageHash;
       setImageHash(response.data.imageHash);
-      concert.image = imageHash;
-      console.log(concert);
-    });
-    Axios.post('http://localhost:5000/api/upload/uploadMetadataIPFS', concert).then((response) => {
       setMetadataHash(response.data.metaHash);
+      console.log('in client');
+      console.log(metadata);
+      console.log(imageHash);
+      console.log(metadataHash);
     });
+
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
@@ -250,22 +251,21 @@ function ConcertUploadPage(props) {
     metadata._id = concertTitle + Date.now();
     metadata.concertInfo._id = account;
 
-    Axios.post('http://localhost:5000/api/upload/uploadConcert', metadata).then((response) => {
-      if (response.data.success) {
+    onSetting().then(() => {
+      onSubmitNft(metadata).then(() => {
         message.success('업로드 중입니다...');
-        onSetting().then(() => {
-          onSubmitNft(response.data.concert).then((resurt) => {
+        setTimeout(() => {
+          navigate('/');
+        }, 3000);
+        Axios.post('http://localhost:5000/api/upload/uploadConcert', metadata).then((response) => {
+          if (response.data.success) {
+            console.log(response.data.concert);
             message.success('성공적으로 업로드 하였습니다.');
-            setTimeout(() => {
-              navigate('/');
-            }, 3000);
-          });
-          // onSetSale(resurt).then(() => {
-          // });
+          } else {
+            alert('콘서트 업로드에 실패 하였습니다.');
+          }
         });
-      } else {
-        alert('콘서트 업로드에 실패 하였습니다.');
-      }
+      });
     });
   };
 
