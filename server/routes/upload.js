@@ -21,10 +21,7 @@ const onUploadImageIpfs = async (imagePath) => {
     const seatImage = fs.readFileSync(imagePath.seatImagePath);
     const ticketImage = fs.readFileSync(imagePath.ticketImagePath);
 
-    console.log("still in uploadIPFS 1");
-
     await ipfs.files.mkdir(`/${imagePath.concertPath}`);
-
     await ipfs.files.write(
       `/${imagePath.concertPath}/concertImage${path.extname(
         imagePath.concertImagePath
@@ -61,33 +58,6 @@ const onUploadImageIpfs = async (imagePath) => {
   }
 };
 
-router.post("/uploadImageIPFS", (req, res) => {
-  const concertImagePath = req.body.concertImagePath;
-  const seatImagePath = req.body.seatImagePath;
-  const ticketImagePath = req.body.ticketImagePath;
-  const imagePath = {
-    concertImagePath: concertImagePath,
-    seatImagePath: seatImagePath,
-    ticketImagePath: ticketImagePath,
-    concertPath: req.body.concertId,
-  };
-  onUploadImageIpfs(imagePath).then((response) => {
-    fs.unlink(concertImagePath, (err) => {
-      if (err) console.error(err);
-    });
-    fs.unlink(seatImagePath, (err) => {
-      if (err) console.error(err);
-    });
-    fs.unlink(ticketImagePath, (err) => {
-      if (err) console.error(err);
-    });
-    return res.json({
-      success: true,
-      imageHash: response,
-    });
-  });
-});
-
 const onUploadMetadataIpfs = async (metadata, concertPath) => {
   try {
     await ipfs.files.write(`/${concertPath}/metadata`, metadata, {
@@ -102,15 +72,38 @@ const onUploadMetadataIpfs = async (metadata, concertPath) => {
   }
 };
 
-router.post("/uploadMetadataIPFS", (req, res) => {
-  const concertPath = req.body._id;
-  const metadata = JSON.stringify(req.body);
-  console.log("now metadata is : ");
-  console.log(metadata);
-  onUploadMetadataIpfs(metadata, concertPath).then((response) => {
-    return res.json({
-      success: true,
-      metaHash: response,
+router.post("/uploadIPFS", (req, res) => {
+  const concertImagePath = req.body.concertImagePath;
+  const seatImagePath = req.body.seatImagePath;
+  const ticketImagePath = req.body.ticketImagePath;
+  let metadata = req.body.metadata;
+  const imagePath = {
+    concertImagePath: concertImagePath,
+    seatImagePath: seatImagePath,
+    ticketImagePath: ticketImagePath,
+    concertPath: metadata._id,
+  };
+  onUploadImageIpfs(imagePath).then((response01) => {
+    fs.unlink(concertImagePath, (err) => {
+      if (err) console.error(err);
+    });
+    fs.unlink(seatImagePath, (err) => {
+      if (err) console.error(err);
+    });
+    fs.unlink(ticketImagePath, (err) => {
+      if (err) console.error(err);
+    });
+    metadata.image.imageHash = response01;
+    const metadataString = JSON.stringify(metadata);
+    console.log("in backend");
+    console.log(response01);
+    onUploadMetadataIpfs(metadataString, metadata._id).then((response02) => {
+      console.log(response02);
+      return res.json({
+        success: true,
+        imageHash: response01,
+        metaHash: response02,
+      });
     });
   });
 });
