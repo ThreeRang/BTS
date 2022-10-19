@@ -41,6 +41,7 @@ let metadata = {
     userImage: '',
   },
 };
+let metadataURL = '';
 
 function ConcertUploadPage(props) {
   /*Register변수 DB에 저장할 때 누가 저장했는지 저장할 변수*/
@@ -64,32 +65,13 @@ function ConcertUploadPage(props) {
   const [ticketImagePath, setTicketImagePath] = useState('');
   const [userImagePath, setUserImagePath] = useState('');
 
-  const [metadataURI, setMetadataURI] = useState('');
-  const [imageHash, setImageHash] = useState('');
-  const [metadataHash, setMetadataHash] = useState('');
-
   const onSetting = async () => {
     await mintContract.methods.setPurchaseTicketToken(purchaseContractAddress).send({ from: account });
     await mintContract.methods.setApprovalForAll(purchaseContractAddress, true).send({ from: account });
   };
 
-  const onSubmitNft = async (concert) => {
+  const mintNFT = async () => {
     var tokensId = [];
-    Axios.post('http://localhost:5000/api/upload/uploadIPFS', {
-      concertImagePath: concertImagePath,
-      seatImagePath: seatImagePath,
-      ticketImagePath: ticketImagePath,
-      metadata: metadata,
-    }).then((response) => {
-      metadata.image.imageHash = response.data.imageHash;
-      setImageHash(response.data.imageHash);
-      setMetadataHash(response.data.metaHash);
-      console.log('in client');
-      console.log(metadata);
-      console.log(imageHash);
-      console.log(metadataHash);
-    });
-
     for (var i = 1; i <= numOfSeat; i++) {
       const nonce = await web3.eth.getTransactionCount(account, 'latest');
       const tx = {
@@ -97,17 +79,31 @@ function ConcertUploadPage(props) {
         to: mintContractAddress,
         nonce: nonce,
         gas: 500000,
-        data: mintContract.methods.mintTicketToken(account, metadataURI, concert._id, i, ticketPrice).encodeABI(),
+        data: mintContract.methods.mintTicketToken(account, metadataURL, metadata._id, i, ticketPrice).encodeABI(),
       };
+      console.log(metadataURL);
       //tx작성, tx와 private key필요
       const signedTx = await web3.eth.accounts.signTransaction(tx, privateKey);
       //영수증 발행
       const transactionReceipt = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
       console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
-      const tokenId = await mintContract.methods.ticketIdOfConcertSeatnum(concert._id, i).call();
-
+      const tokenId = await mintContract.methods.ticketIdOfConcertSeatnum(metadata._id, i).call();
       tokensId.push({ tokenId: tokenId, price: ticketPrice });
     }
+    return tokensId;
+  };
+
+  const onSubmitNft = async (concert) => {
+    Axios.post('http://localhost:5000/api/upload/uploadIPFS', {
+      concertImagePath: concertImagePath,
+      seatImagePath: seatImagePath,
+      ticketImagePath: ticketImagePath,
+      metadata: metadata,
+    }).then((response) => {
+      metadata.image.imageHash = response.data.imageHash;
+      metadataURL = response.data.metaHash;
+    });
+    const tokensId = mintNFT();
     return tokensId;
   };
 
