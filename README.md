@@ -37,6 +37,7 @@
 - The platform is build on public Ethereum blockchain network where ERC721 tokens represent concert tickets.
 
 - Features
+
   - Ticket is NFT(Non fungible token) based ERC721.
   - All transaction is conducted by Smart Contract.
   - A wallet is authorized by blockchain.
@@ -71,17 +72,20 @@ npm install
 
 - Smart contract
 
-    ```bash
-      cd truffle
-      truffle migrate --reset
-    ```
+  ```bash
+    cd truffle
+    truffle migrate --reset
+  ```
 
   - Move `MintTicketToken.json` and `PurchaseTicketToken.json` to `/client/src` directory.
   - Create `/client/src/smartContractConfig.js` file, and write **contract address** and **privateKey**.
 
+- IPFS Desktop
+  - IPFS Desktop must be installed.
+
 ### 3. Run
 
-``` bash
+```bash
 npm run dev
 ```
 
