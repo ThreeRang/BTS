@@ -15,7 +15,7 @@ const UploadHistory = ({ account }) => {
             <div>
               <img
                 style={{ width: '100%' }}
-                src={`http://localhost:5000/${concert.image.concertImage}`}
+                src={`https://ipfs.io/ipfs/${concert.image.imageHash}/concertImage.jpg`}
                 alt="concertImage"
               />
             </div>

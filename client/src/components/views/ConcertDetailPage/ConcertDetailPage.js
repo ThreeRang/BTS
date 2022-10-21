@@ -10,11 +10,11 @@ import detailPageStyle from './ConcertDetailPage.module.css';
 const { TabPane } = Tabs;
 const ConcertDetailPage = () => {
   const { concertId } = useParams();
-  const [concertImage, setConcertImage] = useState('');
+  const [imageHash, setImageHash] = useState('');
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
       if (response.data.success) {
-        setConcertImage(response.data.concert.image.concertImage);
+        setImageHash(response.data.concert.image.imageHash);
       } else {
         alert('공연 정보를 읽는데 실패하였습니다.');
       }
@@ -23,7 +23,7 @@ const ConcertDetailPage = () => {
   return (
     <div className={detailPageStyle.wrapper}>
       <div className={detailPageStyle.profileImage}>
-        <img src={`http://localhost:5000/${concertImage}`} alt="concertimage" />
+        <img src={`https://ipfs.io/ipfs/${imageHash}/concertImage.jpg`} alt="concertimage" />
       </div>
       <div>
         <Tabs defaultActiveKey="1">

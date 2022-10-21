@@ -4,7 +4,7 @@ import Dropzone from 'react-dropzone';
 import Axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import uploadStyle from './ConcertUploadPage.module.css';
-import { mintContract, purchaseContract, web3 } from '../../../web3Config';
+import { mintContract, web3 } from '../../../web3Config';
 import { privateKey, mintContractAddress, purchaseContractAddress } from '../../../smartContractConfig';
 // import MintTicketTokenJSON from './MintTicketToken.json';
 // import MintTicketToken from '../../../abi/MintTicketToken.json';
