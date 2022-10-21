@@ -12,7 +12,11 @@ const TicketCard = ({ concertData }) => {
         <div className={ticketStyle.ticketImage}>
           <a href={`/concert/detail/${concertData.concertId}/ticket/${concertData.id}`}>
             <div>
-              <img style={{ width: '100%' }} src={`http://localhost:5000/${concertData.img}`} alt="ticketImage" />
+              <img
+                style={{ width: '100%' }}
+                src={`https://ipfs.io/ipfs/${concertData.img}/ticketImage.jpg`}
+                alt="ticketImage"
+              />
             </div>
           </a>
           <br />
@@ -44,7 +48,7 @@ const ConcertItemsTab = ({ concertId }) => {
   const [concertTitle, setConcertTitle] = useState('');
   const [concertDate, setConcertDate] = useState('');
   const [reservationClose, setReservationClose] = useState('');
-  const [ticketImg, setTicketImg] = useState('');
+  const [imageHash, setImageHash] = useState('');
   const [loading, setLoading] = useState(true);
 
   const getConcertTickets = async () => {
@@ -62,7 +66,7 @@ const ConcertItemsTab = ({ concertId }) => {
           title: concertTitle,
           date: concertDate,
           reservationClose: reservationClose,
-          img: ticketImg,
+          img: imageHash,
           seatNumber: i,
           price: ticketPrice,
         };
@@ -76,9 +80,9 @@ const ConcertItemsTab = ({ concertId }) => {
   };
 
   useEffect(() => {
-    if (numOfSeat !== 0 && concertTitle !== '' && concertDate !== '' && reservationClose !== '' && ticketImg !== '')
+    if (numOfSeat !== 0 && concertTitle !== '' && concertDate !== '' && reservationClose !== '' && imageHash !== '')
       getConcertTickets();
-  }, [numOfSeat, concertTitle, concertDate, reservationClose, ticketImg]);
+  }, [numOfSeat, concertTitle, concertDate, reservationClose, imageHash]);
 
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
@@ -93,7 +97,7 @@ const ConcertItemsTab = ({ concertId }) => {
             '/' +
             response.data.concert.concertInfo.reservation.close.time
         );
-        setTicketImg(response.data.concert.image.ticketImage);
+        setImageHash(response.data.concert.image.imageHash);
       } else {
         alert('콘서트 가져오기를 실패 했습니다.');
       }

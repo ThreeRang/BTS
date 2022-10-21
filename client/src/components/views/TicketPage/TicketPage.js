@@ -16,7 +16,7 @@ const TicketPage = () => {
   const [concertAddress, setConcertAddress] = useState('');
   const [reservationDate, setReservationDate] = useState('');
   const [writerAccount, setWriterAccount] = useState('');
-  const [ticketImage, setTicketImage] = useState('');
+  const [imageHash, setImageHash] = useState('');
   const [ticketPrice, setTicketPrice] = useState(0);
   const [seatNum, setSeatNum] = useState(0);
   const [account, setAccount] = useState('');
@@ -63,10 +63,9 @@ const TicketPage = () => {
   useEffect(() => {
     Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
       if (response.data.success) {
-        setTicketImage(response.data.concert.image.ticketImage);
+        setImageHash(response.data.concert.image.imageHash);
         setWriterAccount(response.data.concert.concertInfo._id);
         setConcertTitle(response.data.concert.concertInfo.concertTitle);
-
         setDescription(response.data.concert.concertInfo.description);
         setConcertDate(
           response.data.concert.concertInfo.concertDate.date + '/' + response.data.concert.concertInfo.concertDate.time
@@ -97,7 +96,7 @@ const TicketPage = () => {
           }}
         >
           <div style={{ width: '300', height: '240', marginRight: '20px' }}>
-            <img src={`http://localhost:5000/${ticketImage}`} alt="ticketImage" />
+            <img src={`https://ipfs.io/ipfs/${imageHash}/ticketImage.jpg`} alt="ticketImage" />
             <br />
           </div>
           <div>
