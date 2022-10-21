@@ -23,27 +23,21 @@ const onUploadImageIpfs = async (imagePath) => {
 
     await ipfs.files.mkdir(`/${imagePath.concertPath}`);
     await ipfs.files.write(
-      `/${imagePath.concertPath}/concertImage${path.extname(
-        imagePath.concertImagePath
-      )}`,
+      `/${imagePath.concertPath}/concertImage.jpg`,
       concertImage,
       {
         create: true,
       }
     );
     await ipfs.files.write(
-      `/${imagePath.concertPath}/seatImage${path.extname(
-        imagePath.concertImagePath
-      )}`,
+      `/${imagePath.concertPath}/seatImage.jpg`,
       seatImage,
       {
         create: true,
       }
     );
     await ipfs.files.write(
-      `/${imagePath.concertPath}/ticketImage${path.extname(
-        imagePath.concertImagePath
-      )}`,
+      `/${imagePath.concertPath}/ticketImage.jpg`,
       ticketImage,
       {
         create: true,
