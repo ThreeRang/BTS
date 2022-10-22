@@ -104,7 +104,7 @@ router.post("/uploadIPFS", (req, res) => {
 
 let storageConcertImage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "metadata_image/concertImage/");
+    cb(null, "image/concertImage/");
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}_${file.originalname}`);
@@ -130,26 +130,23 @@ router.post(
         .resize({ width: 300, height: 240 })
         .withMetadata()
         .toFile(
-          `metadata_image/concertImage/_resize_${res.req.file.filename}`,
+          `image/concertImage/_resize_${res.req.file.filename}`,
           (err, info) => {
             if (err) {
               console.log(err);
               return res.json({ success: false });
             }
-            fs.unlink(
-              `metadata_image/concertImage/${res.req.file.filename}`,
-              (err) => {
-                if (err) {
-                  console.log(err);
-                  return res.json({ success: false });
-                }
-                return res.json({
-                  success: true,
-                  url: res.req.file.path,
-                  fileName: `_resize_${res.req.file.filename}`,
-                });
+            fs.unlink(`image/concertImage/${res.req.file.filename}`, (err) => {
+              if (err) {
+                console.log(err);
+                return res.json({ success: false });
               }
-            );
+              return res.json({
+                success: true,
+                url: res.req.file.path,
+                fileName: `_resize_${res.req.file.filename}`,
+              });
+            });
           }
         );
     } catch (err) {
@@ -161,7 +158,7 @@ router.post(
 
 let storageTicketImage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "metadata_image/ticketImage/");
+    cb(null, "image/ticketImage/");
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}_${file.originalname}`);
@@ -187,26 +184,23 @@ router.post(
         .resize({ width: 300, height: 240 })
         .withMetadata()
         .toFile(
-          `metadata_image/ticketImage/_resize_${res.req.file.filename}`,
+          `image/ticketImage/_resize_${res.req.file.filename}`,
           (err, info) => {
             if (err) {
               console.log(err);
               return res.json({ success: false });
             }
-            fs.unlink(
-              `metadata_image/ticketImage/${res.req.file.filename}`,
-              (err) => {
-                if (err) {
-                  console.log(err);
-                  return res.json({ success: false });
-                }
-                return res.json({
-                  success: true,
-                  url: res.req.file.path,
-                  fileName: `_resize_${res.req.file.filename}`,
-                });
+            fs.unlink(`image/ticketImage/${res.req.file.filename}`, (err) => {
+              if (err) {
+                console.log(err);
+                return res.json({ success: false });
               }
-            );
+              return res.json({
+                success: true,
+                url: res.req.file.path,
+                fileName: `_resize_${res.req.file.filename}`,
+              });
+            });
           }
         );
     } catch (err) {
@@ -218,7 +212,7 @@ router.post(
 
 let storageSeatImage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "metadata_image/seatImage/");
+    cb(null, "image/seatImage/");
   },
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}_${file.originalname}`);
@@ -244,26 +238,23 @@ router.post(
         .resize({ width: 300, height: 240 })
         .withMetadata()
         .toFile(
-          `metadata_image/seatImage/_resize_${res.req.file.filename}`,
+          `image/seatImage/_resize_${res.req.file.filename}`,
           (err, info) => {
             if (err) {
               console.log(err);
               return res.json({ success: false });
             }
-            fs.unlink(
-              `metadata_image/seatImage/${res.req.file.filename}`,
-              (err) => {
-                if (err) {
-                  console.log(err);
-                  return res.json({ success: false });
-                }
-                return res.json({
-                  success: true,
-                  url: res.req.file.path,
-                  fileName: `_resize_${res.req.file.filename}`,
-                });
+            fs.unlink(`image/seatImage/${res.req.file.filename}`, (err) => {
+              if (err) {
+                console.log(err);
+                return res.json({ success: false });
               }
-            );
+              return res.json({
+                success: true,
+                url: res.req.file.path,
+                fileName: `_resize_${res.req.file.filename}`,
+              });
+            });
           }
         );
     } catch (err) {
