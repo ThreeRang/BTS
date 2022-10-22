@@ -183,7 +183,7 @@ function ConcertUploadPage(props) {
     formData.append('file', files[0]);
     Axios.post('http://localhost:5000/api/upload/concertImage', formData, config).then((response) => {
       if (response.data.success) {
-        setconcertImagePath(`metadata_image/concertImage/${response.data.fileName}`);
+        setconcertImagePath(`image/concertImage/${response.data.fileName}`);
         console.log(response.data.fileName);
       } else {
         alert('사진 업로드를 실패했습니다.');
@@ -199,7 +199,7 @@ function ConcertUploadPage(props) {
     formData.append('file', files[0]);
     Axios.post('http://localhost:5000/api/upload/seatImage', formData, config).then((response) => {
       if (response.data.success) {
-        setSeatImagePath(`metadata_image/seatImage/${response.data.fileName}`);
+        setSeatImagePath(`image/seatImage/${response.data.fileName}`);
       } else {
         alert('사진 업로드를 실패했습니다.');
         navigate('/');
@@ -214,7 +214,7 @@ function ConcertUploadPage(props) {
     formData.append('file', files[0]);
     Axios.post('http://localhost:5000/api/upload/ticketImage', formData, config).then((response) => {
       if (response.data.success) {
-        setTicketImagePath(`metadata_image/ticketImage/${response.data.fileName}`);
+        setTicketImagePath(`image/ticketImage/${response.data.fileName}`);
       } else {
         alert('사진 업로드를 실패했습니다.');
         navigate('/');
