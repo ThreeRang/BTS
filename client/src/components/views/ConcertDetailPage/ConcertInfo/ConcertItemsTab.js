@@ -52,7 +52,7 @@ const ConcertItemsTab = ({ concertId }) => {
       var tickets = [];
       for (let i = 1; i <= numOfSeat; i++) {
         const ticketId = await mintContract.methods.ticketIdOfConcertSeatnum(concertId, i).call();
-        const onSale = await purchaseContract.methods.getInOnSaleTicketTokenArray(ticketId).call();
+        const onSale = await purchaseContract.methods.checkOnSaleTicketTokenArray(ticketId).call();
         if (!onSale) continue;
         const ticketPrice = await mintContract.methods.ticketPrices(ticketId).call();
 
@@ -90,8 +90,8 @@ const ConcertItemsTab = ({ concertId }) => {
         );
         setReservationClose(
           response.data.concert.concertInfo.reservation.close.date +
-            '/' +
-            response.data.concert.concertInfo.reservation.close.time
+          '/' +
+          response.data.concert.concertInfo.reservation.close.time
         );
         setTicketImg(response.data.concert.image.ticketImage);
       } else {
