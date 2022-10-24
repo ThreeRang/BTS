@@ -6,59 +6,84 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./MintTicketToken.sol";
 
-contract PurchaseTicketToken{
+contract PurchaseTicketToken {
+    // create MintTicketToken instance
     MintTicketToken public mintTicketTokenAddress;
 
-    constructor (address _mintTicketTokenAddress){
+    // 생성자
+    constructor(address _mintTicketTokenAddress) {
         mintTicketTokenAddress = MintTicketToken(_mintTicketTokenAddress);
     }
 
-    //(key, value) => (_tokenId, _ticketPrice)
-    mapping(uint256 => uint256) public ticketTokenPrices;
-    uint256[] public onSaleTicketTokenArray;
+    /**
+     * variables
+     * ticketTokenPrices : price of ticket
+     * onSaleTicketTokenArray : a list of ticket on sale
+     */
+    mapping(uint256 => uint256) public _ticketTokenPrices;
+    uint256[] public _onSaleTicketTokenArray;
 
-    function setForSaleTicketToken(uint256 _tokenId, uint256 _ticketPrice) public{
-        // address ticketOwner = mintTicketTokenAddress.ownerOf(_tokenId);
+    /**
+     * set price of ticket and status on sale
+     */
+    function setForSaleTicketToken(uint256 tokenId, uint256 ticketPrice)
+        public
+    {
+        require(
+            ticketPrice > 0,
+            "PurchaseTicketToken : Price is zero or lower."
+        );
 
-        // require(ticketOwner == msg.sender, "Caller is not ticket token owner.");
-        require(_ticketPrice > 0, "Price is zero or lower.");
-        // require (mintTicketTokenAddress.isApprovedForAll(ticketOwner, address(this)), "ticket token owner did not approve token.");
-
-        ticketTokenPrices[_tokenId] = _ticketPrice;
-        onSaleTicketTokenArray.push(_tokenId);
+        _ticketTokenPrices[tokenId] = ticketPrice;
+        _onSaleTicketTokenArray.push(tokenId);
     }
 
-    function purchaseTicketToken(uint256 _tokenId) public payable{
-        uint256 ticketPrice = ticketTokenPrices[_tokenId];
-        address ticketOwner = mintTicketTokenAddress.ownerOf(_tokenId);
+    /**
+     * purchase ticket
+     */
+    function purchaseTicketToken(uint256 tokenId) public payable {
+        uint256 ticketPrice = _ticketTokenPrices[tokenId];
+        address ticketOwner = mintTicketTokenAddress.ownerOf(tokenId);
 
-        require(ticketPrice > 0 , "Ticket Token not sale.");
-        require(ticketPrice <= msg.value, "Caller sent lower than price.");
-        require(msg.value >= ticketPrice, "Caller sent lower than price");
+        require(ticketPrice > 0, "Ticket is not on sale.");
+        require(msg.value >= ticketPrice, "Caller pay lower value than price");
 
-        //msg.value : price보다 크거나 같은 값이 들어와야 된다.
-        //이부분 살짝 이해 안됨
         payable(ticketOwner).transfer(msg.value);
-        mintTicketTokenAddress.safeTransferFrom(ticketOwner, msg.sender, _tokenId);
+        mintTicketTokenAddress.safeTransferFrom(
+            ticketOwner,
+            msg.sender,
+            tokenId
+        );
 
-        ticketTokenPrices[_tokenId] = 0;
+        _ticketTokenPrices[tokenId] = 0;
 
-        for(uint256 i = 0; i < onSaleTicketTokenArray.length ; i++){
-            //위에서 토큰 가격을 0원으로 설정했으므로 그것 제거
-            if(ticketTokenPrices[onSaleTicketTokenArray[i]] == 0){
-                onSaleTicketTokenArray[i] = onSaleTicketTokenArray[onSaleTicketTokenArray.length - 1];
-                onSaleTicketTokenArray.pop();
+        for (uint256 i = 0; i < _onSaleTicketTokenArray.length; i++) {
+            if (_ticketTokenPrices[_onSaleTicketTokenArray[i]] == 0) {
+                _onSaleTicketTokenArray[i] = _onSaleTicketTokenArray[
+                    _onSaleTicketTokenArray.length - 1
+                ];
+                _onSaleTicketTokenArray.pop();
             }
         }
     }
 
-    function getOnSaleTicketTokenArrayLenth() view public returns (uint256){
-        return onSaleTicketTokenArray.length;
+    /**
+     * return number of ticket on sale
+     */
+    function getOnSaleTicketTokenArrayLenth() public view returns (uint256) {
+        return _onSaleTicketTokenArray.length;
     }
-    
-    function getInOnSaleTicketTokenArray(uint256 _tokenId) view public returns (bool){
-        for(uint256 i = 0; i < onSaleTicketTokenArray.length ; i++){
-            if(onSaleTicketTokenArray[i] == _tokenId){
+
+    /**
+     * check ticket token on sale
+     */
+    function checkOnSaleTicketTokenArray(uint256 tokenId)
+        public
+        view
+        returns (bool)
+    {
+        for (uint256 i = 0; i < _onSaleTicketTokenArray.length; i++) {
+            if (_onSaleTicketTokenArray[i] == tokenId) {
                 return true;
             }
         }

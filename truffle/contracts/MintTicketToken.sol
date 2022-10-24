@@ -7,36 +7,67 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PurchaseTicketToken.sol";
-//https://docs.openzeppelin.com/contracts/4.x/api/utils#Counters
-contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
+
+contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable {
+    // create PurchaseTicketToken instance
     PurchaseTicketToken public purchaseTicketToken;
 
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
-    //공연좌석에 따른 티켓Id
-    mapping(string => mapping(uint256 => uint256)) private _ticketIdOfConcertSeatnum;
-    //티켓Id에 따른 가격
-    mapping(uint256 => uint256) private _ticketPrices;
-    //티켓Id에 따른 공연Id
-    mapping(uint256 => string) private _ticketConcert;
-    //티켓Id에 따른 좌석번호
-    mapping(uint256 => uint256) private _ticketSeatnum;
-    //티켓Id에 따른 사용여부
-    mapping(uint256 => bool) private _ticketUsed;
-    //event정의
-    event info(string name, address own, uint256 id, string URI, uint256 seatNum, uint256 price); 
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
-        internal
-        override(ERC721, ERC721Enumerable)
-    {
+    /**
+     * variables
+     * 공연Id : concertTitle + Date.now()
+     * 티켓Id : tokenId
+     * _ticketIdOfConcertSeatnum : 공연Id(string)좌석번호(int)에 따른 티켓Id(int)
+     * _ticketPrices : 티켓Id(int)에 따른 티켓가격(int)
+     * _ticketConcert : 티켓Id(int)에 따른 공연Id(string)
+     * _ticketSeatnum : 티켓Id(int)에 따른 좌석번호(int)
+     * _ticketUsed : 티켓Id(int)에 따른 사용여부(bool)
+     */
+    mapping(string => mapping(uint256 => uint256))
+        private _ticketIdOfConcertSeatnum;
+    mapping(uint256 => uint256) private _ticketPrices;
+    mapping(uint256 => string) private _ticketConcert;
+    mapping(uint256 => uint256) private _ticketSeatnum;
+    mapping(uint256 => bool) private _ticketUsed;
+
+    /**
+     * event
+     * message
+     * owner : publisher account of this contract
+     * id : tokenId
+     * metadataURI : url(IPFS) of metadata(json) about token
+     * seatNum : seat number of ticket
+     * price : price of token
+     */
+    event info(
+        string message,
+        address owner,
+        uint256 id,
+        string metadataURI,
+        uint256 seatNum,
+        uint256 price
+    );
+
+    // 상속
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 tokenId
+    ) internal override(ERC721, ERC721Enumerable) {
         super._beforeTokenTransfer(from, to, tokenId);
     }
 
-    function _burn(uint256 tokenId) internal override(ERC721, ERC721URIStorage) {
+    // 상속
+    function _burn(uint256 tokenId)
+        internal
+        override(ERC721, ERC721URIStorage)
+    {
         super._burn(tokenId);
     }
 
+    // 상속
     function tokenURI(uint256 tokenId)
         public
         view
@@ -46,6 +77,7 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         return super.tokenURI(tokenId);
     }
 
+    // 상속
     function supportsInterface(bytes4 interfaceId)
         public
         view
@@ -55,97 +87,129 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         return super.supportsInterface(interfaceId);
     }
 
-    function _baseURI() internal pure override returns (string memory) {
-        return "https://ipfs.io/ipfs/";
-    }
+    // 생성자
+    constructor() ERC721("BTSTicket", "BTS") {}
 
-    constructor() ERC721("BTSTicket","BTS"){
-        //_setBaseURI("ipfs://");
-        //_setBaseURI("https://ipfs.io/ipfs/");
-    }
-
-    function _setTicketIdOfConcertSeatnum(string memory concertId, uint256 seatnum, uint256 tokenId) 
-        internal
-        virtual
-    {
-        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+    /**
+     * set tokenId to ticketId
+     */
+    function _setTicketIdOfConcertSeatnum(
+        string memory concertId,
+        uint256 seatnum,
+        uint256 tokenId
+    ) internal virtual {
+        require(_exists(tokenId), "MIntTicketToken: tokenId is unvalid");
         _ticketIdOfConcertSeatnum[concertId][seatnum] = tokenId;
     }
 
-    function _setTicketPrices(uint256 tokenId, uint256 price) internal virtual{
-        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+    /**
+     * set price of ticket
+     */
+    function _setTicketPrices(uint256 tokenId, uint256 price) internal virtual {
+        require(_exists(tokenId), "MIntTicketToken: tokenId is unvalid");
         _ticketPrices[tokenId] = price;
     }
 
-    function _setTicketSeatnum(uint256 tokenId, uint256 seatnum) internal virtual{
-        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+    /**
+     * set seat number of ticket
+     */
+    function _setTicketSeatnum(uint256 tokenId, uint256 seatnum)
+        internal
+        virtual
+    {
+        require(_exists(tokenId), "MIntTicketToken: tokenId is unvalid");
         _ticketSeatnum[tokenId] = seatnum;
     }
 
-    function _setTicketUsed(uint256 tokenId, bool used) internal virtual{
-        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+    /**
+     * set usage status of ticket
+     */
+    function _setTicketUsed(uint256 tokenId, bool used) internal virtual {
+        require(_exists(tokenId), "MIntTicketToken: tokenId is unvalid");
         _ticketUsed[tokenId] = used;
     }
 
-    function _setTicketConcert(uint256 tokenId, string memory concertId) internal virtual{
-        require(_exists(tokenId), "MIntTicketToken: URI set of nonexistent token");
+    /**
+     * set concertId to tokenId
+     */
+    function _setTicketConcert(uint256 tokenId, string memory concertId)
+        internal
+        virtual
+    {
+        require(_exists(tokenId), "MIntTicketToken: tokenId is unvalid");
         _ticketConcert[tokenId] = concertId;
     }
 
-    function ticketIdOfConcertSeatnum(string memory concertId, uint256 seetnum) 
-        public 
-        view 
-        returns(uint256)
+    /**
+     * return tokenId
+     */
+    function ticketIdOfConcertSeatnum(string memory concertId, uint256 seatnum)
+        public
+        view
+        returns (uint256)
     {
-        return _ticketIdOfConcertSeatnum[concertId][seetnum];
+        return _ticketIdOfConcertSeatnum[concertId][seatnum];
     }
 
-    function ticketPrices(uint256 tokenId) 
-        public 
-        view 
-        returns(uint256)
-    {
+    /**
+     * return price of ticket
+     */
+    function ticketPrices(uint256 tokenId) public view returns (uint256) {
         return _ticketPrices[tokenId];
     }
 
-    function ticketConcert(uint256 tokenId) 
-        public 
-        view 
-        returns(string memory)
+    /**
+     * return concertId
+     */
+    function ticketConcert(uint256 tokenId)
+        public
+        view
+        returns (string memory)
     {
         return _ticketConcert[tokenId];
     }
 
-    function ticketSeatnum(uint256 tokenId) 
-        public 
-        view 
-        returns(uint256)
-    {
+    /**
+     * return seat number of ticket
+     */
+    function ticketSeatnum(uint256 tokenId) public view returns (uint256) {
         return _ticketSeatnum[tokenId];
     }
 
-    function ticketUsed(uint256 tokenId) 
-        public 
-        view 
-        returns(bool)
-    {
+    /**
+     * return usage status of Ticket
+     */
+    function ticketUsed(uint256 tokenId) public view returns (bool) {
         return _ticketUsed[tokenId];
     }
 
-    function useTicket(uint256 tokenId) 
-        public 
-        returns(bool)
-    {
+    /**
+     * use ticket
+     */
+    function useTicket(uint256 tokenId) public returns (bool) {
         _setTicketUsed(tokenId, true);
         return _ticketUsed[tokenId];
     }
 
-    function mintTicketToken(address owner, string memory metadataURI, string memory concertId, uint256 seatnum, uint256 price)
-        public
-        returns(uint256)
-    {
+    /**
+     * mint ticket token
+     * param
+     * owner : publisher account
+     * metadataURI : url(IPFS) of metadata(json) about token
+     * concertId
+     * seatnum
+     * price
+     * @return tokenId
+     */
+    function mintTicketToken(
+        address owner,
+        string memory metadataURI,
+        string memory concertId,
+        uint256 seatnum,
+        uint256 price
+    ) public returns (uint256) {
         _tokenIds.increment();
-        
+
         uint256 id = _tokenIds.current();
 
         _safeMint(owner, id);
@@ -156,13 +220,23 @@ contract MintTicketToken is ERC721URIStorage, ERC721Enumerable, Ownable{
         _setTicketSeatnum(id, seatnum);
         _setTicketUsed(id, false);
         purchaseTicketToken.setForSaleTicketToken(id, price);
-        
-        emit info("In sol : success minting!", owner, id, metadataURI, seatnum, price); 
+
+        emit info(
+            "In sol : success minting!",
+            owner,
+            id,
+            metadataURI,
+            seatnum,
+            price
+        );
 
         return id;
     }
 
-    function setPurchaseTicketToken(address _purchaseTicketToken) public{
+    /**
+     * use external contract
+     */
+    function setPurchaseTicketToken(address _purchaseTicketToken) public {
         purchaseTicketToken = PurchaseTicketToken(_purchaseTicketToken);
     }
 }
