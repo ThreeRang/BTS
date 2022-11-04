@@ -1,7 +1,10 @@
 .wrapper {
-  width: 50%;
+  width: 80%;
   text-align: center;
   margin: auto auto;
+}
+.account:hover {
+  cursor: pointer;
 }
 table {
   width: 100%;

@@ -1,68 +1,81 @@
 import React, { useEffect, useState } from 'react';
 import { Card } from 'antd-v3';
 import './ConcertActivityTab.css';
-import { web3, mintContract, purchaseContract } from '../../../../web3Config';
+import { web3, purchaseContract } from '../../../../web3Config';
 const ConcertActivityTab = ({ concertId }) => {
-  const [transaction, setTransaction] = useState([]);
+  const [transactions, setTransaction] = useState([]);
 
   useEffect(async () => {
-    /**  */
-    // await mintContract.events.Approval().then(function (eventss) {
-    //   console.log(eventss); // same results as the optional callback above
-    // });
-    const hash = web3.utils.keccak256('test1241667547152818');
-    console.log(hash);
+    const concertIdHashValue = web3.utils.keccak256(concertId);
     await purchaseContract
       .getPastEvents('purchase', {
         fromBlock: 0,
         toBlock: 'latest',
       })
-      .then(function (events) {
-        console.log(events);
-        console.log(events[0].returnValues.concertId); // same results as the optional callback above
-        console.log(events[0].returnValues.concertId == hash);
-        console.log(events[1].returnValues.concertId == hash);
+      .then((events) => {
+        events.map((event) => {
+          if (event.returnValues.concertId === concertIdHashValue) {
+            setTransaction((preState) => [
+              ...preState,
+              {
+                from: event.returnValues.from,
+                to: event.returnValues.to,
+                price: event.returnValues.price,
+                transactionHash: event.transactionHash,
+              },
+            ]);
+          }
+        });
       });
-
-    //이걸로 tr hash가져오고 owner가져올 수 있다
-    // web3.eth.getTransaction('0x2f390257ef4ae528d8efe706f27ec455a9eeaba37169042dec03ab6e37e07bfb').then(function (tr) {
-    //   console.log(tr);
-    // });
-    //얘로 새로운 owner가져올 수 있다
   }, []);
 
   return (
-    <div class="wrapper">
+    <div className="wrapper">
       <Card title={`concertId : ${concertId}`} size="small">
         <table>
           <thead>
             <tr>
-              <th>from </th>
-              <th>to </th>
-              <th>price </th>
-              <th>date </th>
+              <th>Number</th>
+              <th>Transaction Hash</th>
+              <th>From </th>
+              <th></th>
+              <th>To </th>
+              <th>Price </th>
             </tr>
           </thead>
 
           <tbody>
-            <tr>
-              <td>안녕</td>
-              <td>안녕하세요</td>
-              <td>hihi</td>
-              <td>봉쥬르</td>
-            </tr>
-            <tr>
-              <td>안녕</td>
-              <td>안녕하세요</td>
-              <td>hihi</td>
-              <td>봉쥬르</td>
-            </tr>
-            <tr>
-              <td>안녕</td>
-              <td>안녕하세요</td>
-              <td>hihi</td>
-              <td>봉쥬르</td>
-            </tr>
+            {console.log(transactions)}
+            {transactions.map((transaction, index) => {
+              return (
+                <tr key={index}>
+                  <td>{index}</td>
+                  <td>
+                    {transaction.transactionHash.length > 20 ? (
+                      <div title={transaction.transactionHash}>{`${transaction.transactionHash.slice(0, 20)}...`}</div>
+                    ) : (
+                      transaction.transactionHash
+                    )}
+                  </td>
+                  <td>
+                    {transaction.from.length > 20 ? (
+                      <div title={transaction.from}>{`${transaction.from.slice(0, 20)}...`}</div>
+                    ) : (
+                      transaction.from
+                    )}
+                  </td>
+                  <td>👉</td>
+                  <td>
+                    {transaction.to.length > 20 ? (
+                      <div title={transaction.to}>{`${transaction.to.slice(0, 20)}...`}</div>
+                    ) : (
+                      transaction.to
+                    )}
+                  </td>
+                  <td>{transaction.price}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
