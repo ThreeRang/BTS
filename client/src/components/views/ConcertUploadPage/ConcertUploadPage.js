@@ -248,8 +248,9 @@ function ConcertUploadPage(props) {
     metadata.concertInfo._id = account;
 
     onSetting().then(() => {
-      onSubmitNft(metadata).then(() => {
-        message.success('업로드 중입니다...');
+      message.success('업로드 중입니다...');
+      onSubmitNft(metadata).then((tokens) => {
+        console.log(tokens);
         setTimeout(() => {
           navigate('/');
         }, 3000);
