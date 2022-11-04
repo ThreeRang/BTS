@@ -24,6 +24,23 @@ contract PurchaseTicketToken {
     uint256[] public _onSaleTicketTokenArray;
 
     /**
+     * event
+     * message
+     * owner : publisher account of this contract
+     * id : tokenId
+     * metadataURI : url(IPFS) of metadata(json) about token
+     * seatNum : seat number of ticket
+     * price : price of token
+     */
+    event purchase(
+        address from,
+        address to,
+        string indexed concertId,
+        uint256 tokenId,
+        uint256 price
+    );
+
+    /**
      * set price of ticket and status on sale
      */
     function setForSaleTicketToken(uint256 tokenId, uint256 ticketPrice)
@@ -44,6 +61,7 @@ contract PurchaseTicketToken {
     function purchaseTicketToken(uint256 tokenId) public payable {
         uint256 ticketPrice = _ticketTokenPrices[tokenId];
         address ticketOwner = mintTicketTokenAddress.ownerOf(tokenId);
+        string memory concertId = mintTicketTokenAddress.ticketConcert(tokenId);
 
         require(ticketPrice > 0, "Ticket is not on sale.");
         require(msg.value >= ticketPrice, "Caller pay lower value than price");
@@ -65,6 +83,8 @@ contract PurchaseTicketToken {
                 _onSaleTicketTokenArray.pop();
             }
         }
+
+        emit purchase(ticketOwner, msg.sender, concertId, tokenId, ticketPrice);
     }
 
     /**
