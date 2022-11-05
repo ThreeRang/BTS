@@ -5,7 +5,7 @@ import Axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import uploadStyle from './ConcertUploadPage.module.css';
 import { mintContract, web3 } from '../../../web3Config';
-import { privateKey, mintContractAddress, purchaseContractAddress } from '../../../smartContractConfig';
+import { mintContractAddress, purchaseContractAddress } from '../../../smartContractConfig';
 // import MintTicketTokenJSON from './MintTicketToken.json';
 // import MintTicketToken from '../../../abi/MintTicketToken.json';
 // import { create } from 'ipfs-http-client';
@@ -51,6 +51,7 @@ function ConcertUploadPage(props) {
   const [concertTitle, setConcertTitle] = useState('');
   const [description, setDescription] = useState('');
   const [concertAddress, setconcertAddress] = useState('');
+  const [privateKey, setPrivateKey] = useState('');
   const [numOfSeat, setNumOfSeat] = useState(0);
   const [reservationOpenDate, setReservationOpenDate] = useState('');
   const [reservationCloseDate, setReservationCloseDate] = useState('');
@@ -369,6 +370,10 @@ function ConcertUploadPage(props) {
           <br />
           <label>Concert Address</label>
           <TextArea onChange={onConcertAddressChange} value={concertAddress} required />
+          <br />
+          <br />
+          <label>PrivateKey</label>
+          <Input onChange={setPrivateKey} value={privateKey} />
           <br />
           <br />
           <div style={{ display: 'flex' }}>
