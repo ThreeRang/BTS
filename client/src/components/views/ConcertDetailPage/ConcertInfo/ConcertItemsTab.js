@@ -94,8 +94,8 @@ const ConcertItemsTab = ({ concertId }) => {
         );
         setReservationClose(
           response.data.concert.concertInfo.reservation.close.date +
-          '/' +
-          response.data.concert.concertInfo.reservation.close.time
+            '/' +
+            response.data.concert.concertInfo.reservation.close.time
         );
         setImageHash(response.data.concert.image.imageHash);
       } else {
@@ -107,7 +107,20 @@ const ConcertItemsTab = ({ concertId }) => {
   const listData = onSaleTickets.map((oneTicket, index) => (
     <TicketCard key={index} concertData={oneTicket}></TicketCard>
   ));
-  return <div>{loading ? <h1>Loading...</h1> : listData}</div>;
+  return (
+    <div>
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <>
+          <div>
+            <img src={`https://ipfs.io/ipfs/${imageHash}/seatImage.jpg`} alt="seatImage" />
+          </div>
+          {listData}
+        </>
+      )}
+    </div>
+  );
 };
 
 export default ConcertItemsTab;
