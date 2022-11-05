@@ -121,7 +121,7 @@ const PurchaseHistory = ({ account }) => {
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
         <div style={{ textAlign: 'left' }} className={concertStyle.concertImage}>
           <div>
-            <img style={{ width: '100%' }} src={`http://localhost:5000/${ticket.img}`} alt="ticketImage" />
+            <img style={{ width: '100%' }} src={`https://ipfs.io/ipfs/${ticket.img}/ticketImage.jpg`} alt="ticketImage" />
           </div>
           <br />
           <Meta style={{ marginLeft: '1rem' }} title={ticket.title} />
