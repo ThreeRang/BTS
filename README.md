@@ -77,8 +77,8 @@ npm install
     truffle migrate --reset
   ```
 
-  - Move `MintTicketToken.json` and `PurchaseTicketToken.json` to `/client/src` directory.
-  - Create `/client/src/smartContractConfig.js` file, and write **contract address** and **privateKey**.
+  - Move `MintTicketToken.json` and `PurchaseTicketToken.json` to `/client/src/contracts` directory.
+  - Create `/client/src/smartContractConfig.js` file, and write **contract address**.
 
 - IPFS Desktop
   - IPFS Desktop must be installed.
