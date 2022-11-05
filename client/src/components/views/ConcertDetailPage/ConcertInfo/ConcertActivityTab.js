@@ -7,6 +7,8 @@ const ConcertActivityTab = ({ concertId }) => {
 
   useEffect(async () => {
     const concertIdHashValue = web3.utils.keccak256(concertId);
+    const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+
     await purchaseContract
       .getPastEvents('purchase', {
         fromBlock: 0,
@@ -17,7 +19,7 @@ const ConcertActivityTab = ({ concertId }) => {
           if (event.returnValues.concertId === concertIdHashValue) {
             web3.eth.getTransaction(event.transactionHash).then((tx) => {
               web3.eth.getBlock(tx.blockNumber).then((block) => {
-                var txTime = new Date(block.timestamp * 1000);
+                var txTime = new Date(block.timestamp * 1000 + KR_TIME_DIFF);
                 setTransaction((preState) => [
                   ...preState,
                   {
