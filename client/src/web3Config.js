@@ -1,8 +1,8 @@
 import { mintContractAddress, purchaseContractAddress } from './smartContractConfig';
 
-const MintTicketTokenJSON = require('./MintTicketToken.json');
+const MintTicketTokenJSON = require('./contracts/MintTicketToken.json');
 const mintABI = MintTicketTokenJSON.abi;
-const PurchaseTicketTokenJSON = require('./PurchaseTicketToken.json');
+const PurchaseTicketTokenJSON = require('./contracts/PurchaseTicketToken.json');
 const purchaseABI = PurchaseTicketTokenJSON.abi;
 
 const Web3 = require('web3');
