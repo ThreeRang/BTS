@@ -15,15 +15,21 @@ const ConcertActivityTab = ({ concertId }) => {
       .then((events) => {
         events.map((event) => {
           if (event.returnValues.concertId === concertIdHashValue) {
-            setTransaction((preState) => [
-              ...preState,
-              {
-                from: event.returnValues.from,
-                to: event.returnValues.to,
-                price: event.returnValues.price,
-                transactionHash: event.transactionHash,
-              },
-            ]);
+            web3.eth.getTransaction(event.transactionHash).then((tx) => {
+              web3.eth.getBlock(tx.blockNumber).then((block) => {
+                var txTime = new Date(block.timestamp * 1000);
+                setTransaction((preState) => [
+                  ...preState,
+                  {
+                    from: event.returnValues.from,
+                    to: event.returnValues.to,
+                    price: event.returnValues.price,
+                    transactionHash: event.transactionHash,
+                    transactionTime: txTime.toUTCString(),
+                  },
+                ]);
+              });
+            });
           }
         });
       });
@@ -35,12 +41,12 @@ const ConcertActivityTab = ({ concertId }) => {
         <table>
           <thead>
             <tr>
-              <th>Number</th>
               <th>Transaction Hash</th>
               <th>From </th>
               <th></th>
               <th>To </th>
               <th>Price </th>
+              <th>Transaction Time</th>
             </tr>
           </thead>
 
@@ -49,7 +55,6 @@ const ConcertActivityTab = ({ concertId }) => {
             {transactions.map((transaction, index) => {
               return (
                 <tr key={index}>
-                  <td>{index}</td>
                   <td>
                     {transaction.transactionHash.length > 20 ? (
                       <div title={transaction.transactionHash}>{`${transaction.transactionHash.slice(0, 20)}...`}</div>
@@ -73,6 +78,7 @@ const ConcertActivityTab = ({ concertId }) => {
                     )}
                   </td>
                   <td>{transaction.price}</td>
+                  <td>{transaction.transactionTime}</td>
                 </tr>
               );
             })}
