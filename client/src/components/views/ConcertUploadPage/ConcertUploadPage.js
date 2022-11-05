@@ -132,6 +132,10 @@ function ConcertUploadPage(props) {
     metadata.concertInfo.concertAddress = e.currentTarget.value;
   };
 
+  const onPrivateKeyChange = (e) => {
+    setPrivateKey(e.currentTarget.value);
+  };
+
   const onNumOfSeatChange = (e) => {
     setNumOfSeat(e.currentTarget.value);
     metadata.concertInfo.numOfSeat = e.currentTarget.value;
@@ -373,7 +377,7 @@ function ConcertUploadPage(props) {
           <br />
           <br />
           <label>PrivateKey</label>
-          <Input onChange={setPrivateKey} value={privateKey} />
+          <Input onChange={onPrivateKeyChange} value={privateKey} required />
           <br />
           <br />
           <div style={{ display: 'flex' }}>
