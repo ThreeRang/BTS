@@ -22,7 +22,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-client/src/MintTicketToken.json
-client/src/PurchaseTicketToken.json
+client/src/contracts/MintTicketToken.json
+client/src/contracts/PurchaseTicketToken.json
 truffle/build/contracts/
 image/
