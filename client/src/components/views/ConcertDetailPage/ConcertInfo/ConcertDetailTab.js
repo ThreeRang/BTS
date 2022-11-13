@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import Axios from 'axios';
+
 import { Typography, Button } from 'antd-v3';
 import detailTabStyle from './ConcertDetailTab.module.css';
+import useConcert from '../../../../hooks/useConcert';
 
 const { Title } = Typography;
 const ConcertDetailTab = ({ concertId }) => {
-  const [writerAccount, setWriterAccount] = useState('');
   const [userAccount, setUserAccount] = useState('');
-  const [concertTitle, setConcertTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [concertDate, setConcertDate] = useState('');
-  const [concertAddress, setConcertAddress] = useState('');
-  const [reservationOpen, setReservationOpen] = useState('');
-  const [reservationClose, setReservationClose] = useState('');
+  const concert = useConcert({ concertId });
 
   const onInit = async () => {
     await window.ethereum.enable();
@@ -24,70 +19,55 @@ const ConcertDetailTab = ({ concertId }) => {
     onInit();
   }, [userAccount]);
 
-  useEffect(() => {
-    Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
-      if (response.data.success) {
-        setWriterAccount(response.data.concert.concertInfo._id);
-        setConcertTitle(response.data.concert.concertInfo.concertTitle);
-        setDescription(response.data.concert.concertInfo.description);
-        setConcertDate(
-          response.data.concert.concertInfo.concertDate.date + '/' + response.data.concert.concertInfo.concertDate.time
-        );
-        setConcertAddress(response.data.concert.concertInfo.concertAddress);
-        setReservationOpen(
-          response.data.concert.concertInfo.reservation.open.date +
-            '/' +
-            response.data.concert.concertInfo.reservation.open.time
-        );
-        setReservationClose(
-          response.data.concert.concertInfo.reservation.close.date +
-            '/' +
-            response.data.concert.concertInfo.reservation.close.time
-        );
-      } else {
-        alert('공연 정보를 읽는데 실패하였습니다.');
-      }
-    });
-  }, [concertId]);
   return (
-    <div className={detailTabStyle.wrapper}>
-      <div className={detailTabStyle.concertTextBox}>
-        <div style={{ display: 'block' }}>
-          <Title level={1}>{concertTitle}</Title>
-          <div style={{ float: 'right' }}>
-            {writerAccount === userAccount ? (
-              <div>
-                <a href={`/concert/detail/${concertId}/update`}>✏</a>
+    <>
+      {concert.isLoading ? (
+        <h1>"Loading..."</h1>
+      ) : (
+        <div className={detailTabStyle.wrapper}>
+          <div className={detailTabStyle.concertTextBox}>
+            <div style={{ display: 'block' }}>
+              <Title level={1}>{concert.concertInfo.concertTitle}</Title>
+              <div style={{ float: 'right' }}>
+                {concert.concertInfo._id === userAccount ? (
+                  <div>
+                    <a href={`/concert/detail/${concertId}/update`}>✏</a>
+                  </div>
+                ) : (
+                  <></>
+                )}
               </div>
-            ) : (
-              <></>
-            )}
+            </div>
+            <div>
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(concert.concertInfo._id);
+                  alert('주소 복사 완료!');
+                }}
+              >
+                {concert.concertInfo._id.length > 15
+                  ? '✍ ' + concert.concertInfo._id.substring(0, 15) + '...'
+                  : '✍ ' + concert.concertInfo._id}
+              </Button>
+            </div>
+          </div>
+          <br />
+          <div className={detailTabStyle.concertTextInfo}>
+            <div className={detailTabStyle.concertTextInfoUp}>
+              <p>Address : {concert.concertInfo.concertAddress}</p>
+              <p>
+                {`Reservation : ${concert.concertInfo.reservation.open.date} (${concert.concertInfo.reservation.open.time}) ~ 
+                ${concert.concertInfo.reservation.close.date} (${concert.concertInfo.reservation.close.time})
+                `}
+              </p>
+
+              <hr />
+              <p>{concert.concertInfo.description}</p>
+            </div>
           </div>
         </div>
-        <div>
-          <Button
-            onClick={() => {
-              navigator.clipboard.writeText(writerAccount);
-              alert('주소 복사 완료!');
-            }}
-          >
-            {writerAccount.length > 15 ? '✍ ' + writerAccount.substring(0, 15) + '...' : '✍ ' + writerAccount}
-          </Button>
-        </div>
-      </div>
-      <br />
-      <div className={detailTabStyle.concertTextInfo}>
-        <div className={detailTabStyle.concertTextInfoUp}>
-          <p>Date : {concertDate}</p>
-          <p>Address : {concertAddress}</p>
-          <p>
-            reservation : {reservationOpen} ~ {reservationClose}
-          </p>
-          <hr />
-          <p>{description}</p>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
