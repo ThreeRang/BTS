@@ -11,6 +11,7 @@
 ![Web3js](https://img.shields.io/badge/Web3.js-F16822?style=flat-square&logo=Web3.js&logoColor=white)
 ![Mongodb](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=MongoDB&logoColor=white)
 ![Solidity](https://img.shields.io/badge/Solidity-363636?style=flat-square&logo=Solidity&logoColor=white)
+![IPFS](https://img.shields.io/badge/IPFS-65C2CB?style=flat-square&logo=IPFS&logoColor=white)
 
 </div>
 
@@ -44,7 +45,7 @@
   - All transaction is stored on blockchain.
 
 - Architecture
-  ![image](https://user-images.githubusercontent.com/48934522/193894308-089e98b4-c033-49bd-990a-c72583fd172e.png)
+  ![image](https://user-images.githubusercontent.com/48934522/200116096-e104c1ca-cdd2-4f2c-ac12-7db7e60df39f.png)
 
 ---
 
@@ -80,7 +81,19 @@ npm install
   - Move `MintTicketToken.json` and `PurchaseTicketToken.json` to `/client/src/contracts` directory.
   - Create `/client/src/smartContractConfig.js` file, and write **contract address**.
 
+- Ganache
+  - <https://trufflesuite.com/ganache/>
+  - Ganache must be installed.
+  - Create and Configure Ethereum Test Network.
+
+- Metamask extension
+  - <https://metamask.io/>
+  - Metamask must be installed.
+  - Add Ethereum Test Network created by Ganache.
+  - Add account with Private key.
+
 - IPFS Desktop
+  - <https://ipfs.tech/#install>
   - IPFS Desktop must be installed.
 
 ### 3. Run
@@ -95,7 +108,7 @@ npm run dev
 
 ### Demo
 
-<https://drive.google.com/file/d/1BrO0DOcbtY_XX3pCH2fC7Ny7SAvolGqc/view?usp=sharing>
+<https://youtu.be/TW746BbDYig>
 
 ---
 
