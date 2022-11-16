@@ -27,9 +27,9 @@ const ConcertDetailTab = ({ concertId }) => {
         <div className={detailTabStyle.wrapper}>
           <div className={detailTabStyle.concertTextBox}>
             <div style={{ display: 'block' }}>
-              <Title level={1}>{concert.concertInfo.concertTitle}</Title>
+              <Title level={1}>{concert.concertMetadata.concertInfo.concertTitle}</Title>
               <div style={{ float: 'right' }}>
-                {concert.concertInfo._id === userAccount ? (
+                {concert.concertMetadata.concertInfo._id === userAccount ? (
                   <div>
                     <a href={`/concert/detail/${concertId}/update`}>✏</a>
                   </div>
@@ -41,28 +41,28 @@ const ConcertDetailTab = ({ concertId }) => {
             <div>
               <Button
                 onClick={() => {
-                  navigator.clipboard.writeText(concert.concertInfo._id);
+                  navigator.clipboard.writeText(concert.concertMetadata.concertInfo._id);
                   alert('주소 복사 완료!');
                 }}
               >
-                {concert.concertInfo._id.length > 15
-                  ? '✍ ' + concert.concertInfo._id.substring(0, 15) + '...'
-                  : '✍ ' + concert.concertInfo._id}
+                {concert.concertMetadata.concertInfo._id.length > 15
+                  ? '✍ ' + concert.concertMetadata.concertInfo._id.substring(0, 15) + '...'
+                  : '✍ ' + concert.concertMetadata.concertInfo._id}
               </Button>
             </div>
           </div>
           <br />
           <div className={detailTabStyle.concertTextInfo}>
             <div className={detailTabStyle.concertTextInfoUp}>
-              <p>Address : {concert.concertInfo.concertAddress}</p>
+              <p>Address : {concert.concertMetadata.concertInfo.concertAddress}</p>
               <p>
-                {`Reservation : ${concert.concertInfo.reservation.open.date} (${concert.concertInfo.reservation.open.time}) ~ 
-                ${concert.concertInfo.reservation.close.date} (${concert.concertInfo.reservation.close.time})
+                {`Reservation : ${concert.concertMetadata.concertInfo.reservation.open.date} (${concert.concertMetadata.concertInfo.reservation.open.time}) ~ 
+                ${concert.concertMetadata.concertInfo.reservation.close.date} (${concert.concertMetadata.concertInfo.reservation.close.time})
                 `}
               </p>
 
               <hr />
-              <p>{concert.concertInfo.description}</p>
+              <p>{concert.concertMetadata.concertInfo.description}</p>
             </div>
           </div>
         </div>
