@@ -4,6 +4,7 @@ import Axios from 'axios';
 import { Col } from 'antd-v3';
 import { mintContract, purchaseContract, web3 } from '../../../../web3Config';
 import ticketStyle from './ConcertItemsTab.module.css';
+import useConcert from '../../../../hooks/useConcert';
 
 const TicketCard = ({ concertData }) => {
   return (
@@ -44,17 +45,13 @@ const TicketCard = ({ concertData }) => {
 
 const ConcertItemsTab = ({ concertId }) => {
   const [onSaleTickets, setOnSaleTickets] = useState([]);
-  const [numOfSeat, setNumOfSeat] = useState(0);
-  const [concertTitle, setConcertTitle] = useState('');
-  const [concertDate, setConcertDate] = useState('');
-  const [reservationClose, setReservationClose] = useState('');
-  const [imageHash, setImageHash] = useState('');
+  const concert = useConcert({ concertId });
   const [loading, setLoading] = useState(true);
 
   const getConcertTickets = async () => {
     try {
       var tickets = [];
-      for (let i = 1; i <= numOfSeat; i++) {
+      for (let i = 1; i <= concert.concertMetadata.concertInfo.numOfSeat; i++) {
         const ticketId = await mintContract.methods.ticketIdOfConcertSeatnum(concertId, i).call();
         const onSale = await purchaseContract.methods.checkOnSaleTicketTokenArray(ticketId).call();
         if (!onSale) continue;
@@ -63,10 +60,10 @@ const ConcertItemsTab = ({ concertId }) => {
         const ticketData = {
           id: ticketId,
           concertId: concertId,
-          title: concertTitle,
-          date: concertDate,
-          reservationClose: reservationClose,
-          img: imageHash,
+          title: concert.concertMetadata.concertInfo.concertTitle,
+          date: `${concert.concertMetadata.concertInfo.concertDate.date} (${concert.concertMetadata.concertInfo.concertDate.time})`,
+          reservationClose: `${concert.concertMetadata.concertInfo.reservation.close.date} (${concert.concertMetadata.concertInfo.reservation.close.time})`,
+          img: concert.concertMetadata.image.imageHash,
           seatNumber: i,
           price: ticketPrice,
         };
@@ -80,29 +77,10 @@ const ConcertItemsTab = ({ concertId }) => {
   };
 
   useEffect(() => {
-    if (numOfSeat !== 0 && concertTitle !== '' && concertDate !== '' && reservationClose !== '' && imageHash !== '')
+    if (!concert.isLoading) {
       getConcertTickets();
-  }, [numOfSeat, concertTitle, concertDate, reservationClose, imageHash]);
-
-  useEffect(() => {
-    Axios.get('http://localhost:5000/api/concert/getConcertInfo', { params: { _id: concertId } }).then((response) => {
-      if (response.data.success) {
-        setNumOfSeat(response.data.concert.concertInfo.numOfSeat);
-        setConcertTitle(response.data.concert.concertInfo.concertTitle);
-        setConcertDate(
-          response.data.concert.concertInfo.concertDate.date + '/' + response.data.concert.concertInfo.concertDate.time
-        );
-        setReservationClose(
-          response.data.concert.concertInfo.reservation.close.date +
-            '/' +
-            response.data.concert.concertInfo.reservation.close.time
-        );
-        setImageHash(response.data.concert.image.imageHash);
-      } else {
-        alert('콘서트 가져오기를 실패 했습니다.');
-      }
-    });
-  }, [concertId]);
+    }
+  }, [concert.isLoading]);
 
   const listData = onSaleTickets.map((oneTicket, index) => (
     <TicketCard key={index} concertData={oneTicket}></TicketCard>
@@ -114,7 +92,10 @@ const ConcertItemsTab = ({ concertId }) => {
       ) : (
         <>
           <div>
-            <img src={`https://ipfs.io/ipfs/${imageHash}/seatImage.jpg`} alt="seatImage" />
+            <img
+              src={`https://ipfs.io/ipfs/${concert.concertMetadata.image.imageHash}/seatImage.jpg`}
+              alt="seatImage"
+            />
           </div>
           {listData}
         </>
