@@ -97,6 +97,7 @@ const ConcertItemsTab = ({ concertId }) => {
               alt="seatImage"
             />
           </div>
+          {console.log(onSaleTickets)}
           {listData}
         </>
       )}
