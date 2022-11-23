@@ -10,7 +10,6 @@ const PurchaseHistory = ({ account }) => {
   const navigate = useNavigate();
   const [usedTickets, setUsedTickets] = useState([]);
   const [unUsedTickets, setUnUsedTickets] = useState([]);
-  const [balances, setBalances] = useState(0);
 
   const onUseTicket = async (ticketId) => {
     await mintContract.methods.useTicket(ticketId).send({ from: account });
@@ -26,7 +25,6 @@ const PurchaseHistory = ({ account }) => {
   const getBalances = async () => {
     try {
       const balance = await mintContract.methods.balanceOf(account).call();
-      setBalances(balance);
       return balance;
     } catch (error) {
       console.error(error);
@@ -69,7 +67,7 @@ const PurchaseHistory = ({ account }) => {
                   notUsedTicketList.push(purchaseTicketData);
                 }
               }
-            } else {
+            } else if (response.status == 400) {
               alert('콘서트 가져오기를 실패 했습니다.');
             }
           }
@@ -121,7 +119,11 @@ const PurchaseHistory = ({ account }) => {
       <Col className={concertStyle.wrapper} key={index} lg={6} md={8} xs={24}>
         <div style={{ textAlign: 'left' }} className={concertStyle.concertImage}>
           <div>
-            <img style={{ width: '100%' }} src={`https://ipfs.io/ipfs/${ticket.img}/ticketImage.jpg`} alt="ticketImage" />
+            <img
+              style={{ width: '100%' }}
+              src={`https://ipfs.io/ipfs/${ticket.img}/ticketImage.jpg`}
+              alt="ticketImage"
+            />
           </div>
           <br />
           <Meta style={{ marginLeft: '1rem' }} title={ticket.title} />
