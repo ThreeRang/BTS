@@ -377,7 +377,7 @@ function ConcertUploadPage(props) {
           <br />
           <br />
           <label>PrivateKey</label>
-          <Input onChange={onPrivateKeyChange} value={privateKey} required />
+          <Input type="password" onChange={onPrivateKeyChange} value={privateKey} required />
           <br />
           <br />
           <div style={{ display: 'flex' }}>
