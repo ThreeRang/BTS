@@ -1,3 +1,4 @@
+const e = require("express");
 const express = require("express");
 const router = express.Router();
 const { Concert } = require("../models/Concert");
@@ -83,8 +84,13 @@ router.get("/getUserConcerts", (req, res) => {
 router.get("/getConcertInfo", (req, res) => {
   const { _id } = req.query;
   Concert.findOne({ _id: _id }).exec((err, concert) => {
-    if (err) return res.status(400).json({ success: false, err });
-    return res.status(200).json({ success: true, concert });
+    if (err) {
+      return res.status(400).json({ success: false, err });
+    } else if (concert == null) {
+      return res.status(200).json({ success: false, err });
+    } else {
+      return res.status(200).json({ success: true, concert });
+    }
   });
 });
 
